@@ -35,9 +35,9 @@ tailwind.config = { theme: { extend: {
 </style>
 </head>
 <body class="min-h-screen bg-encre font-sans text-white antialiased lining-nums">
-<div class="pointer-events-none fixed inset-0">
-  <img src="assets/img/salle2.jpg" alt="" class="h-full w-full object-cover opacity-25">
-  <div class="absolute inset-0 bg-gradient-to-br from-encre via-encre/90 to-nuit/85"></div>
+<div class="pointer-events-none fixed inset-0" aria-hidden="true">
+  <canvas data-anim="ondes" class="h-full w-full"></canvas>
+  <div class="absolute inset-0 bg-encre/70"></div>
 </div>
 <div class="relative">
   <header class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-8">
@@ -77,5 +77,6 @@ tailwind.config = { theme: { extend: {
     { id: 'quand', type: 'date', resume: 'Date', surtitre: 'Le grand soir', question: 'Quand voulez-vous chanter ?', libelleMoment: 'Heure d’arrivée souhaitée', moments: ['18 h', '19 h', '20 h', '21 h', '22 h', 'Plus tard'] },
     { id: 'contact', type: 'contact', resume: 'Contact', surtitre: 'Dernière étape', question: 'À quel nom, la réservation ?' } ] };</script>
 <script src="assets/demande.js"></script>
+<script src="assets/animations.js"></script>
 </body>
 </html>
