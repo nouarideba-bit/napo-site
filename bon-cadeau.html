@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Offrir un bon cadeau | NAPO</title>
-<meta name="description" content="Offrez une soirée au NAPO, restaurant corse à Paris 17 : bon cadeau pour une session Amuzetoi (karaoké, blind-test, quiz) ou un dîner corse, valable 1 an.">
+<meta name="description" content="Offrez une soirée au NAPO, restaurant corse à Paris 17 : bon cadeau pour une session Amuzetoi (karaoké, blind-test, quiz) ou un dîner corse, valable 3 mois.">
 <link rel="canonical" href="https://lenapo.fr/bon-cadeau.html">
 <link rel="icon" href="assets/img/favicon.png">
 <meta property="og:title" content="NAPO | Restaurant corse à Paris 17">
@@ -75,14 +75,15 @@ tailwind.config = { theme: { extend: {
       </div></div>
     </aside>
   </main>
+  <p class="px-4 pb-8 text-center text-xs text-white/50"><a class="lien" href="cgv.html">Conditions générales de vente</a> · <a class="lien" href="mentions-legales.html">Mentions légales</a> · Médiateur : ANM Conso</p>
 </div>
 <script src="assets/paiement.js"></script>
 <script>window.DEMANDE = {
   email: 'event@lenapo.fr', sujet: 'Bon cadeau NAPO', intro: 'Bonjour, je souhaite offrir un bon cadeau du NAPO.',
   motExemple: 'Une date limite, une question…', boutonEnvoi: 'Commander le bon',
   finTitre: 'Un cadeau qui se savoure.', finTexte: 'Envoyez-nous votre commande : nous vous renvoyons le lien de paiement, puis le bon dès le règlement.',
-  validite: '1 an', paiementBon: (window.NAPO_PAIEMENT || {}).bonCadeau || '',
-  apres: [['Sous 24 h', 'Le NAPO confirme votre commande et vous envoie le lien de paiement.'], ['Dès le règlement', 'Le bon est envoyé par e-mail, ou prêt à retirer au restaurant.'], ['Pendant 1 an', 'La personne gâtée réserve quand elle veut, au 01 80 87 13 15 ou sur le site.']],
+  validite: '3 mois', paiementBon: (window.NAPO_PAIEMENT || {}).bonCadeau || '',
+  apres: [['Sous 24 h', 'Le NAPO confirme votre commande et vous envoie le lien de paiement.'], ['Dès le règlement', 'Le bon est envoyé par e-mail, ou prêt à retirer au restaurant.'], ['Pendant 3 mois', 'La personne gâtée réserve quand elle veut, au 01 80 87 13 15 ou sur le site.']],
   etapes: [
     { id: 'quoi', type: 'cartes', resume: 'Cadeau', surtitre: 'Faites plaisir', question: 'Que voulez-vous offrir ?', choix: [
       { nom: 'Une session Amuzetoi', signe: '♪', detail: 'Karaoké, blind-test et quiz en salle privative' },
