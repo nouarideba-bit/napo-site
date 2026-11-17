@@ -12,4 +12,5 @@ window.NAPO_PAIEMENT = {
   semaine: '', // 12 € : du lundi au vendredi
   weekend: '', // 14 € : le samedi avant 19 h
   pointe: '',  // 16 € : le vendredi et le samedi à partir de 19 h
+  bonCadeau: '', // bon cadeau : lien Stripe où le client saisit lui-même le montant
 };

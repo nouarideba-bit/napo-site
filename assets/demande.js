@@ -43,6 +43,16 @@
         <div class="sm:col-span-2"><label class="text-xs font-bold uppercase tracking-[.2em] text-sable" for="mail">E-mail <span class="font-normal normal-case tracking-normal text-white/45">(facultatif)</span></label><input id="mail" type="email" autocomplete="email" value="${esc(etat.mail || '')}" class="${champ}" placeholder="vous@exemple.fr"></div>
         <div class="sm:col-span-2"><label class="text-xs font-bold uppercase tracking-[.2em] text-sable" for="mot">Un mot pour nous <span class="font-normal normal-case tracking-normal text-white/45">(facultatif)</span></label><textarea id="mot" rows="3" class="${champ} resize-none" placeholder="${esc(D.motExemple)}">${esc(etat.mot || '')}</textarea></div>
       </div>`,
+    cadeau: () => `<div class="grid gap-6">
+        <div><label class="text-xs font-bold uppercase tracking-[.2em] text-sable" for="pour">Prénom de la personne gâtée</label><input id="pour" autocomplete="off" value="${esc(etat.pour || '')}" class="${champ}" placeholder="Prénom"></div>
+        <div><label class="text-xs font-bold uppercase tracking-[.2em] text-sable" for="motCadeau">Votre mot, imprimé sur le bon <span class="font-normal normal-case tracking-normal text-white/45">(facultatif)</span></label><textarea id="motCadeau" rows="3" maxlength="200" class="${champ} resize-none" placeholder="Joyeux anniversaire ! Une soirée au NAPO, rien que pour toi.">${esc(etat.motCadeau || '')}</textarea><p class="mt-1 text-right text-xs text-white/45">200 caractères au plus</p></div>
+      </div>`,
+    inscription: () => `<div class="grid gap-6 sm:grid-cols-2">
+        <div><label class="text-xs font-bold uppercase tracking-[.2em] text-sable" for="nom">Prénom</label><input id="nom" autocomplete="given-name" value="${esc(etat.nom || '')}" class="${champ}" placeholder="Votre prénom"></div>
+        <div><label class="text-xs font-bold uppercase tracking-[.2em] text-sable" for="mail">E-mail</label><input id="mail" type="email" autocomplete="email" value="${esc(etat.mail || '')}" class="${champ}" placeholder="vous@exemple.fr"></div>
+        <div class="sm:col-span-2"><label class="text-xs font-bold uppercase tracking-[.2em] text-sable" for="tel">Téléphone, pour les rappels par SMS <span class="font-normal normal-case tracking-normal text-white/45">(facultatif)</span></label><input id="tel" type="tel" autocomplete="tel" value="${esc(etat.tel || '')}" class="${champ}" placeholder="06 12 34 56 78"></div>
+        <label class="flex cursor-pointer items-start gap-3 text-white/80 sm:col-span-2"><input id="consent" type="checkbox" ${etat.consent ? 'checked' : ''} class="mt-1 h-5 w-5 shrink-0 border-white/40 bg-transparent text-bordeaux focus:ring-sable"> <span>J’accepte de recevoir l’agenda du NAPO par e-mail, et par SMS si j’ai donné mon numéro. Je peux me désinscrire à tout moment.</span></label>
+      </div>`,
   };
 
   // Salles : capacité choisie, et la plus petite combinaison qui accueille le groupe
@@ -73,6 +83,7 @@
     return `${total} € (${lignes.join(' + ')})`;
   };
   let dernierTotal = 0;
+  const montant = () => { const c = D.etapes.flatMap((e) => e.choix || []).find((x) => x.montant !== undefined && Object.values(etat).includes(x.nom)); return c ? c.montant : null; };
   // Annulation gratuite : jusqu'à N heures avant l'heure d'arrivée
   const limiteAnnulation = () => {
     if (!D.conditions || !etat.date) return D.conditions ? '72 h avant la date convenue' : '';
@@ -97,6 +108,8 @@
     if (e.type === 'salles') return etat[e.id].join(', ');
     if (e.type === 'date') return [etat.date ? dateLisible(etat.date) : '', etat.moment, etat.flexible ? 'date flexible' : ''].filter(Boolean).join(' · ');
     if (e.type === 'contact') return [etat.nom, etat.tel, etat.mail].filter(Boolean).join(' · ');
+    if (e.type === 'cadeau') return [etat.pour, etat.motCadeau ? 'avec un mot' : ''].filter(Boolean).join(' · ');
+    if (e.type === 'inscription') return [etat.nom, etat.mail].filter(Boolean).join(' · ');
     return '';
   };
   const erreur = (e) => {
@@ -114,6 +127,13 @@
       if (etat.date && (e.joursFermes || []).includes(new Date(etat.date + 'T12:00').getDay())) return e.messageFerme;
       if (!etat.moment) return 'Choisissez une heure.';
     }
+    if (e.type === 'cadeau' && (!etat.pour || etat.pour.trim().length < 2)) return 'Indiquez le prénom de la personne à qui vous offrez le bon.';
+    if (e.type === 'inscription') {
+      if (!etat.nom || etat.nom.trim().length < 2) return 'Indiquez votre prénom.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(etat.mail || '')) return 'Indiquez une adresse e-mail valide.';
+      if (etat.tel && etat.tel.replace(/\D/g, '').length < 9) return 'Ce numéro de téléphone semble incomplet.';
+      if (!etat.consent) return 'Cochez la case pour accepter de recevoir l’agenda.';
+    }
     if (e.type === 'contact') {
       if (!etat.nom || etat.nom.trim().length < 2) return 'Indiquez votre nom.';
       if ((etat.tel || '').replace(/\D/g, '').length < 9) return 'Indiquez un numéro de téléphone valide.';
@@ -122,16 +142,17 @@
     return '';
   };
   const lire = () => {
-    ['nom', 'tel', 'mail', 'mot', 'date'].forEach((k) => { if ($(k)) etat[k] = $(k).value; });
+    ['nom', 'tel', 'mail', 'mot', 'date', 'pour', 'motCadeau'].forEach((k) => { if ($(k)) etat[k] = $(k).value; });
+    if ($('consent')) etat.consent = $('consent').checked;
     if ($('flexible')) etat.flexible = $('flexible').checked;
     const e = D.etapes[i];
     if ($('nb') && e) etat[e.id] = parseInt($('nb').value, 10) || 0;
   };
-  const texte = () => [D.intro, '', ...D.etapes.map((e) => `${e.resume} : ${valeur(e) || '-'}`), estimation() ? `Estimation : ${estimation()}` : '', D.conditions && estimation() ? `Paiement partagé : ${euros(part())} par personne\nAnnulation gratuite ${etat.date ? 'jusqu’au ' : ''}${limiteAnnulation()}` : '', etat.mot ? `\nMessage : ${etat.mot}` : ''].join('\n').trim();
+  const texte = () => [D.intro, '', ...D.etapes.map((e) => `${e.resume} : ${valeur(e) || '-'}`), estimation() ? `Estimation : ${estimation()}` : '', montant() ? `Montant du bon : ${montant()} € (valable ${D.validite || '1 an'})` : '', etat.motCadeau ? `Mot à imprimer sur le bon : ${etat.motCadeau}` : '', etat.consent ? 'Consentement : accepte de recevoir l’agenda du NAPO, désinscription à tout moment.' : '', D.conditions && estimation() ? `Paiement partagé : ${euros(part())} par personne\nAnnulation gratuite ${etat.date ? 'jusqu’au ' : ''}${limiteAnnulation()}` : '', etat.mot ? `\nMessage : ${etat.mot}` : ''].join('\n').trim();
 
   const billet = () => {
     $('billet').innerHTML = D.etapes.map((e, k) => { const v = valeur(e); const fait = k < i || (k === i && v && e.type !== 'contact');
-      return `<div class="flex items-baseline gap-3 border-b border-or/25 py-2.5 ${fait ? '' : 'opacity-40'}"><dt class="w-24 shrink-0 text-[.62rem] font-bold uppercase tracking-[.18em] text-or">${esc(e.resume)}</dt><dd class="font-serif text-lg font-semibold leading-tight text-nuit">${fait && v ? esc(v) : '…'}</dd></div>`; }).join('') + (estimation() ? `<div class="mt-3 bg-bordeaux px-4 py-3 text-center text-white"><dt class="text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Estimation</dt><dd class="font-serif text-2xl font-semibold">${esc(estimation().split(' (')[0])}</dd><dd class="text-xs text-white/75">${esc(estimation().split(' (')[1].replace(')', ''))}</dd></div>` : '');
+      return `<div class="flex items-baseline gap-3 border-b border-or/25 py-2.5 ${fait ? '' : 'opacity-40'}"><dt class="w-24 shrink-0 text-[.62rem] font-bold uppercase tracking-[.18em] text-or">${esc(e.resume)}</dt><dd class="font-serif text-lg font-semibold leading-tight text-nuit">${fait && v ? esc(v) : '…'}</dd></div>`; }).join('') + (montant() ? `<div class="mt-3 bg-bordeaux px-4 py-3 text-center text-white"><dt class="text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Montant du bon</dt><dd class="font-serif text-2xl font-semibold">${montant()} €</dd><dd class="text-xs text-white/75">valable ${esc(D.validite || '1 an')}</dd></div>` : '') + (estimation() ? `<div class="mt-3 bg-bordeaux px-4 py-3 text-center text-white"><dt class="text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Estimation</dt><dd class="font-serif text-2xl font-semibold">${esc(estimation().split(' (')[0])}</dd><dd class="text-xs text-white/75">${esc(estimation().split(' (')[1].replace(')', ''))}</dd></div>` : '');
   };
 
   const afficher = (sens = 1) => {
@@ -147,7 +168,7 @@
         <h2 class="mt-4 font-serif text-4xl font-semibold leading-none sm:text-6xl" tabindex="-1" id="titre">${esc(D.finTitre)}</h2>
         <p class="mt-5 max-w-xl leading-relaxed text-white/75">${esc(D.finTexte)}</p>
         <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-          <a href="mailto:${D.email}?subject=${sujet}&body=${corps}" id="envoyer" class="btn inline-flex items-center justify-center bg-bordeaux text-white hover:bg-terre">Envoyer ma demande</a>
+          <a href="mailto:${D.email}?subject=${sujet}&body=${corps}" id="envoyer" class="btn inline-flex items-center justify-center bg-bordeaux text-white hover:bg-terre">${esc(D.boutonEnvoi || 'Envoyer ma demande')}</a>
           <button type="button" id="copier" class="btn inline-flex items-center justify-center border border-white/40 text-white hover:bg-white hover:text-nuit">Copier le récapitulatif</button>
         </div>
         ${D.conditions ? `<div class="mt-8 grid gap-3 sm:grid-cols-3">
@@ -163,14 +184,15 @@
             ${lienPaiement() ? `<a href="${lienPaiement()}" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center border border-white/40 text-white hover:bg-white hover:text-nuit">Payer ma part</a>` : `<span class="btn inline-flex cursor-not-allowed items-center justify-center border border-white/20 text-white/45" aria-disabled="true">Payer ma part · bientôt en ligne</span>`}
           </div>
         </div>` : ''}
+        ${D.paiementBon !== undefined ? `<div class="mt-8 border border-sable/50 bg-sable/10 p-5">
+          <p class="font-serif text-2xl font-semibold">Régler le bon de ${montant() ? montant() + ' €' : 'votre montant'}</p>
+          <p class="mt-1 text-sm text-white/70">${/^https:\/\/buy\.stripe\.com\//.test(D.paiementBon) ? 'Paiement sécurisé par carte. Le bon est envoyé dès réception du règlement.' : 'Le lien de paiement vous est envoyé avec la confirmation. Le bon part dès réception du règlement.'}</p>
+          <div class="mt-4">${/^https:\/\/buy\.stripe\.com\//.test(D.paiementBon) ? `<a href="${D.paiementBon}" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center bg-sable text-nuit hover:bg-white">Payer le bon</a>` : `<span class="btn inline-flex cursor-not-allowed items-center justify-center border border-white/20 text-white/45" aria-disabled="true">Payer le bon · bientôt en ligne</span>`}</div>
+        </div>` : ''}
         <div id="apres" class="mt-8 hidden border border-sable bg-encre/80 p-6" role="status" tabindex="-1">
           <p class="font-serif text-3xl font-semibold">Votre messagerie s’est ouverte ?</p>
           <p class="mt-2 text-white/75">Appuyez sur « Envoyer » dans le message déjà rédigé. C’est tout.</p>
-          <ol class="mt-5 grid gap-3 sm:grid-cols-3">
-            <li class="border-l-2 border-sable pl-3"><span class="block text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Sous 24 h</span><span class="text-sm text-white/80">Le NAPO confirme la disponibilité par téléphone ou par e-mail.</span></li>
-            <li class="border-l-2 border-sable pl-3"><span class="block text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Ensuite</span><span class="text-sm text-white/80">${D.conditions ? 'Vous recevez le lien de paiement, à partager avec votre groupe.' : 'On construit ensemble le déroulé de votre événement.'}</span></li>
-            <li class="border-l-2 border-sable pl-3"><span class="block text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Le jour J</span><span class="text-sm text-white/80">Rendez-vous au 4-6 rue Pierre Demours, métro Ternes ou Argentine.</span></li>
-          </ol>
+          <ol class="mt-5 grid gap-3 sm:grid-cols-3">${(D.apres || [['Sous 24 h', 'Le NAPO confirme la disponibilité par téléphone ou par e-mail.'], ['Ensuite', D.conditions ? 'Vous recevez le lien de paiement, à partager avec votre groupe.' : 'On construit ensemble le déroulé de votre événement.'], ['Le jour J', 'Rendez-vous au 4-6 rue Pierre Demours, métro Ternes ou Argentine.']]).map(([t, x]) => `<li class="border-l-2 border-sable pl-3"><span class="block text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">${esc(t)}</span><span class="text-sm text-white/80">${esc(x)}</span></li>`).join('')}</ol>
           <p class="mt-6 font-serif text-xl font-semibold">Rien ne s’est ouvert ?</p>
           <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <a href="https://mail.google.com/mail/?view=cm&fs=1&to=${D.email}&su=${sujet}&body=${corps}" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center border border-white/40 text-white hover:bg-white hover:text-nuit">Envoyer avec Gmail</a>
