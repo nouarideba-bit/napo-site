@@ -36,6 +36,9 @@ const docs = {
   'napo-chevalet-qr': doc('NAPO – Chevalet QR code', [
     page(`<h1>La carte</h1><div class="devise">${esc(carte.devise)}</div><div class="qr"><img src="qr-menu.svg" alt="QR code vers lenapo.fr/menu"></div><ul class="langues">${carte.chevalet.map((l) => `<li><b>${l.code}</b><span lang="${l.code.toLowerCase()}">${esc(l.texte)}</span></li>`).join('')}</ul><div class="url">lenapo.fr/menu</div>`),
   ]),
+  'napo-chevalet-avis': doc('NAPO – Chevalet avis Google', [
+    page(`<h1>Votre avis</h1><div class="devise">Vous avez passé un bon moment ? Dites-le.</div><div class="qr"><img src="qr-avis.svg" alt="QR code vers la fiche Google du NAPO"></div><ul class="langues">${carte.avis.map((l) => `<li><b>${l.code}</b><span lang="${l.code.toLowerCase()}">${esc(l.texte)}</span></li>`).join('')}</ul>`),
+  ]),
   'napo-chevalet-qr-seul': doc('NAPO – Chevalet QR code seul', [
     page(`<div class="qr qr-seul"><img src="qr-menu.svg" alt="QR code vers lenapo.fr/menu"></div>`),
   ]),

@@ -314,5 +314,15 @@
       "code": "CO",
       "texte": "Scannate per scopre a carta"
     }
+  ],
+  "avis": [
+    {
+      "code": "FR",
+      "texte": "Scannez pour laisser votre avis sur Google"
+    },
+    {
+      "code": "EN",
+      "texte": "Scan to leave us a Google review"
+    }
   ]
 }
