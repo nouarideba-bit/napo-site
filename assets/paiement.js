@@ -5,7 +5,7 @@
 // « Payer ma part » apparaît et le lien s'ajoute au message envoyé au groupe.
 // Tant qu'un lien est vide, le site indique que le paiement arrive avec la confirmation.
 //
-// Dans Stripe, créer un lien par tarif, pour le produit « Session Amuzoire, 1 heure, 1 personne »,
+// Dans Stripe, créer un lien par tarif, pour le produit « Session Amuzetoi, 1 heure, 1 personne »,
 // avec l'option « Permettre aux clients d'ajuster la quantité » : la quantité sert aux heures
 // supplémentaires. Voir le README, section « Activer le paiement partagé ».
 window.NAPO_PAIEMENT = {

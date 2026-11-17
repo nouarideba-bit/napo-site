@@ -23,7 +23,7 @@ Polices des cartes : Cinzel et Cormorant Garamond (licence SIL OFL 1.1).
 Le site est prêt : il calcule la part de chacun et prépare le message pour le groupe. Il ne manque que les liens de paiement.
 
 1. Créer un compte Stripe au nom du restaurant (stripe.com), et le faire valider.
-2. Dans Stripe, menu « Payment Links », créer trois liens pour le produit « Session Amuzoire, 1 heure, 1 personne » : 12 €, 14 € et 16 €. Cocher « Permettre aux clients d'ajuster la quantité » (elle sert aux heures supplémentaires).
+2. Dans Stripe, menu « Payment Links », créer trois liens pour le produit « Session Amuzetoi, 1 heure, 1 personne » : 12 €, 14 € et 16 €. Cocher « Permettre aux clients d'ajuster la quantité » (elle sert aux heures supplémentaires).
 3. Coller les trois liens dans `assets/paiement.js` et publier.
 
 Seuls les liens qui commencent par `https://buy.stripe.com/` sont acceptés. Tant qu'un lien est vide, le bouton « Payer ma part » reste grisé et le site annonce que le lien arrive avec la confirmation.
