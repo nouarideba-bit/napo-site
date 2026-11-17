@@ -432,6 +432,23 @@ tailwind.config = { theme: { extend: {
   const majMarge = () => document.documentElement.style.setProperty('--entete', entete.firstElementChild.offsetHeight + 'px');
   window.addEventListener('resize', majMarge);
   majMarge();
+  // Liens du menu : la page se cale sur la section, puis se recale si la mise en page a bougé
+  // (styles Tailwind générés après coup, polices ou images chargées en route)
+  const allerA = (id, doux) => {
+    const cible = document.getElementById(id); if (!cible) return;
+    majMarge();
+    cible.scrollIntoView({ behavior: doux ? 'smooth' : 'auto' });
+    [450, 1100, 2000].forEach((ms) => setTimeout(() => {
+      const ecart = cible.getBoundingClientRect().top - entete.firstElementChild.offsetHeight + 1;
+      if (Math.abs(ecart) > 3) window.scrollBy({ top: ecart, behavior: 'auto' });
+    }, ms));
+  };
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]'); if (!a || a.getAttribute('href').length < 2) return;
+    const id = a.getAttribute('href').slice(1); if (!document.getElementById(id)) return;
+    e.preventDefault(); history.pushState(null, '', '#' + id); allerA(id, !matchMedia('(prefers-reduced-motion: reduce)').matches);
+  });
+  window.addEventListener('load', () => { if (location.hash.length > 1) allerA(decodeURIComponent(location.hash.slice(1)), false); });
 
   // La carte : onglets
   const C = window.CARTE;
