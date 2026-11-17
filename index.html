@@ -35,6 +35,30 @@ tailwind.config = { theme: { extend: {
   .apparait.vu { opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) { .apparait { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } .btn:hover { transform: none; } }
 
+  /* En-tête flottant en verre dépoli : transparent en haut de page, plus dense au défilement */
+  .verre { background: rgba(23,23,20,.22); -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%); border: 1px solid rgba(255,250,240,.16); transition: background-color .3s ease, box-shadow .3s ease, border-color .3s ease; }
+  .verre-plein, #entete.defile .verre { background: rgba(23,32,58,.82); border-color: rgba(202,185,144,.28); box-shadow: 0 18px 40px -22px rgba(0,0,0,.6); }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .verre { background: rgba(23,32,58,.92); } }
+
+  /* Réservation rapide intégrée au hero */
+  .resa label { display: block; font-size: .64rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #cab990; }
+  .resa input, .resa select { width: 100%; margin-top: .35rem; background: transparent; border: 0; border-bottom: 1px solid rgba(255,250,240,.3); padding: .45rem 0; color: #fff; font-size: 1.05rem; color-scheme: dark; border-radius: 0; }
+  .resa select option { color: #17203a; }
+  .resa input:focus, .resa select:focus { outline: none; border-bottom-color: #cab990; }
+
+  /* Grille Bento */
+  .tuile { position: relative; overflow: hidden; isolation: isolate; }
+  .tuile img { transition: transform .9s cubic-bezier(.2,.7,.2,1); }
+  .tuile:hover img { transform: scale(1.06); }
+  .tuile .voile { position: absolute; inset: 0; background: linear-gradient(to top, rgba(23,23,20,.85), rgba(23,23,20,.05) 60%); z-index: -1; }
+
+  /* Parallaxe légère (désactivée si l'utilisateur réduit les animations) */
+  [data-parallaxe] { will-change: transform; }
+
+  /* Plan en niveaux de gris, couleur au survol */
+  .plan iframe { filter: grayscale(1) contrast(1.05); transition: filter .5s ease; }
+  .plan:hover iframe, .plan:focus-within iframe { filter: grayscale(.2); }
+
   /* Le mot-logo AMUZETOI */
   .amuz { align-items: center; gap: .03em; font-family: "Bowlby One", "Arial Black", sans-serif; line-height: 1; letter-spacing: 0; white-space: nowrap; }
   .amuz-l { display: inline-block; transform: translateY(var(--y)) rotate(var(--r)); text-shadow: .045em .055em 0 rgba(0,0,0,.35); animation: amuz-saut 2.8s ease-in-out infinite; }
@@ -52,10 +76,10 @@ tailwind.config = { theme: { extend: {
 <a href="#contenu" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:bg-white focus:px-4 focus:py-2">Aller au contenu</a>
 
 <!-- Navigation -->
-<header id="entete" class="fixed inset-x-0 top-0 z-50 text-white transition-colors duration-300">
-  <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-8">
+<header id="entete" class="fixed inset-x-0 top-0 z-50 px-3 pt-3 text-white sm:px-6 sm:pt-4">
+  <div class="verre mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
     <a href="#haut" class="font-serif text-3xl font-semibold tracking-[.18em]">NAPO</a>
-    <nav class="hidden items-center gap-8 text-[.78rem] font-semibold uppercase tracking-[.16em] lg:flex" aria-label="Navigation principale">
+    <nav class="hidden items-center gap-7 text-[.74rem] font-semibold uppercase tracking-[.16em] lg:flex" aria-label="Navigation principale">
       <a class="lien" href="#carte">La Carte</a>
       <a class="lien" href="#esprit">L’Esprit</a>
       <a class="lien" href="#evenements">Événements</a>
@@ -70,7 +94,7 @@ tailwind.config = { theme: { extend: {
       </button>
     </div>
   </div>
-  <nav id="menu-mobile" class="hidden border-t border-white/15 bg-nuit px-4 pb-6 pt-2 text-white lg:hidden" aria-label="Navigation mobile">
+  <nav id="menu-mobile" class="verre verre-plein mx-auto mt-2 hidden max-w-7xl px-5 pb-6 pt-2 text-white lg:hidden" aria-label="Navigation mobile">
     <a class="block border-b border-white/10 py-4 text-sm font-semibold uppercase tracking-[.16em]" href="#carte">La Carte</a>
     <a class="block border-b border-white/10 py-4 text-sm font-semibold uppercase tracking-[.16em]" href="#esprit">L’Esprit</a>
     <a class="block border-b border-white/10 py-4 text-sm font-semibold uppercase tracking-[.16em]" href="#evenements">Événements</a>
@@ -83,16 +107,67 @@ tailwind.config = { theme: { extend: {
 
 <main id="contenu">
 <!-- Hero -->
-<section id="haut" class="relative flex min-h-[92svh] items-end overflow-hidden bg-encre text-white">
-  <img src="assets/img/hero.webp" alt="La salle du NAPO : table dressée sous un grand tableau au cadre doré, lampes rouges" class="absolute inset-0 h-full w-full object-cover" fetchpriority="high">
-  <div class="absolute inset-0 bg-gradient-to-t from-encre/90 via-encre/45 to-encre/55"></div>
-  <div class="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-36 sm:px-8 sm:pb-24">
-    <p class="text-[.72rem] font-bold uppercase tracking-[.3em] text-sable">Restaurant corse · Paris 17 · Entre mer et maquis</p>
-    <h1 class="mt-5 max-w-3xl font-serif text-5xl font-semibold leading-[.95] sm:text-7xl lg:text-8xl">La Corse prend ses quartiers à Paris.</h1>
-    <p class="mt-6 max-w-md text-base leading-relaxed text-white/85 sm:text-lg">Cuisine corse contemporaine à deux pas des Ternes : charcuteries, brocciu, sanglier et herbes du maquis, dans un décor de caractère.</p>
-    <div class="mt-9 flex flex-col gap-3 sm:flex-row">
-      <a href="https://bookings.zenchef.com/results?rid=388299&pid=1001&lang=fr" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center bg-bordeaux text-white hover:bg-terre">Réserver</a>
-      <a href="#carte" class="btn inline-flex items-center justify-center border border-white/70 text-white hover:bg-white hover:text-nuit">Découvrir la carte</a>
+<section id="haut" class="relative flex min-h-[100svh] flex-col justify-end overflow-hidden bg-encre text-white">
+  <img src="assets/img/hero.webp" alt="La salle du NAPO : table dressée sous un grand tableau au cadre doré, lampes rouges" class="absolute inset-0 h-full w-full scale-105 object-cover" data-parallaxe="0.18" fetchpriority="high">
+  <div class="absolute inset-0 bg-gradient-to-t from-encre via-encre/50 to-encre/40"></div>
+  <div class="relative mx-auto w-full max-w-7xl px-4 pt-36 sm:px-8">
+    <p class="apparait text-[.72rem] font-bold uppercase tracking-[.3em] text-sable">Restaurant corse · Paris 17 · Entre mer et maquis</p>
+    <h1 class="apparait mt-5 max-w-5xl font-serif text-[3.4rem] font-semibold leading-[.88] sm:text-8xl lg:text-[8rem]">La Corse prend ses quartiers <em class="font-medium text-sable">à Paris.</em></h1>
+    <p class="apparait mt-7 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">Le prisuttu tranché à la main, le brocciu qui gratine, l’odeur du maquis après la pluie. À deux pas des Ternes, une table corse qui ne chuchote pas.</p>
+  </div>
+
+  <!-- Réservation rapide -->
+  <div class="relative mx-auto mt-10 w-full max-w-7xl px-4 pb-6 sm:mt-14 sm:px-8 sm:pb-10">
+    <form id="resa" class="resa verre grid grid-cols-2 gap-x-4 gap-y-5 p-5 sm:p-6 lg:grid-cols-[1fr_1fr_1fr_auto] lg:items-end lg:gap-8" aria-label="Réserver une table">
+      <div><label for="resa-date">Date</label><input id="resa-date" type="date" required></div>
+      <div><label for="resa-heure">Heure</label><select id="resa-heure"></select></div>
+      <div class="col-span-2 sm:col-span-1"><label for="resa-pax">Convives</label><select id="resa-pax"></select></div>
+      <button type="submit" class="btn inline-flex items-center justify-center bg-bordeaux text-white hover:bg-terre col-span-2 sm:col-span-1 lg:col-span-1">Voir les disponibilités</button>
+      <p id="resa-info" class="col-span-2 text-xs text-white/70 lg:col-span-4" aria-live="polite"><span id="resa-msg">Confirmation immédiate sur notre page de réservation.</span> Au-delà de 12 convives, <a class="lien text-sable" href="evenement.html">parlez-nous de votre événement</a>.</p>
+    </form>
+  </div>
+</section>
+
+<!-- La maison en un coup d'œil : grille Bento -->
+<section aria-labelledby="bento-titre" class="bg-encre px-4 pb-20 pt-6 text-white sm:px-8 sm:pb-28">
+  <div class="mx-auto max-w-7xl">
+    <h2 id="bento-titre" class="sr-only">La maison en un coup d’œil</h2>
+    <div class="grid auto-rows-[15rem] gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[13.5rem]">
+      <a href="#carte" class="tuile apparait group flex flex-col justify-end p-6 sm:col-span-2 sm:row-span-2">
+        <img src="assets/img/civet.jpg" alt="Civet de sanglier aux olives" class="absolute inset-0 -z-20 h-full w-full object-cover" loading="lazy"><span class="voile"></span>
+        <p class="text-[.68rem] font-bold uppercase tracking-[.28em] text-sable">Plat signature</p>
+        <h3 class="mt-2 font-serif text-4xl font-semibold leading-none sm:text-5xl">Le sanglier, <em class="font-medium text-sable">mijoté longtemps.</em></h3>
+        <span class="lien mt-4 self-start text-[.72rem] font-bold uppercase tracking-[.16em]">Voir la carte →</span>
+      </a>
+      <a href="#carte" class="tuile apparait flex flex-col justify-end p-6">
+        <img src="assets/img/cannelloni.jpg" alt="Cannelloni au brocciu gratinés" class="absolute inset-0 -z-20 h-full w-full object-cover" loading="lazy"><span class="voile"></span>
+        <p class="text-[.68rem] font-bold uppercase tracking-[.28em] text-sable">Fait maison</p>
+        <h3 class="mt-1 font-serif text-2xl font-semibold leading-tight">Cannelloni d’Ajaccio au brocciu</h3>
+      </a>
+      <div class="apparait flex flex-col justify-between bg-bordeaux p-6">
+        <p class="text-[.68rem] font-bold uppercase tracking-[.28em] text-sable">Menus dégustation</p>
+        <p class="font-serif text-5xl font-semibold leading-none">6 · 8 · 10 <span class="block text-xl font-medium italic text-sable">temps, à partager</span></p>
+        <a href="#carte" data-onglet="degustation" class="lien self-start text-[.72rem] font-bold uppercase tracking-[.16em]">Les découvrir →</a>
+      </div>
+      <a href="#infos" class="tuile apparait flex flex-col justify-end p-6 sm:col-span-2">
+        <img src="assets/img/salle.jpg" alt="La salle du NAPO, fauteuils et lumières tamisées" class="absolute inset-0 -z-20 h-full w-full object-cover" loading="lazy"><span class="voile"></span>
+        <p class="text-[.68rem] font-bold uppercase tracking-[.28em] text-sable">L’ambiance</p>
+        <h3 class="mt-1 font-serif text-3xl font-semibold leading-tight">Cadres dorés, lumières basses, <em class="font-medium text-sable">tables qui durent.</em></h3>
+      </a>
+      <a href="https://www.google.com/maps/search/?api=1&query=NAPO%20restaurant%20corse%204%20rue%20Pierre%20Demours%2075017%20Paris" target="_blank" rel="noopener" class="apparait group flex flex-col justify-between border border-sable/30 bg-nuit p-6 transition hover:border-sable">
+        <p class="text-[.68rem] font-bold uppercase tracking-[.28em] text-sable">Vos avis</p>
+        <p class="font-serif text-2xl font-semibold leading-tight">Ce sont nos convives qui en parlent le mieux.</p>
+        <span class="lien self-start text-[.72rem] font-bold uppercase tracking-[.16em]">Lire les avis Google →</span>
+      </a>
+      <a href="#amuzetoi" class="tuile apparait flex flex-col justify-end p-6">
+        <img src="assets/img/salle-sacre.jpg" alt="Projet de décoration du Sacre : murs rouges, couronne en néon" class="absolute inset-0 -z-20 h-full w-full object-cover" loading="lazy"><span class="voile"></span>
+        <p class="text-[.68rem] font-bold uppercase tracking-[.28em] text-sable">Après le dîner</p>
+        <h3 class="mt-1 font-serif text-2xl font-semibold leading-tight">Karaoké, blind-test et quiz en salle privée</h3>
+      </a>
+      <div class="apparait flex flex-col justify-center bg-creme p-6 text-center text-nuit sm:col-span-2 lg:col-span-2">
+        <p class="font-serif text-3xl italic leading-tight text-bordeaux sm:text-4xl">« Per l’onore è per a Corsica »</p>
+        <p class="mt-3 text-[.68rem] font-bold uppercase tracking-[.28em] text-or">La devise de la maison</p>
+      </div>
     </div>
   </div>
 </section>
@@ -124,8 +199,8 @@ tailwind.config = { theme: { extend: {
 <section id="esprit" class="scroll-mt-20 px-4 py-20 sm:px-8 sm:py-28">
   <div class="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2 lg:gap-20">
     <div class="apparait grid grid-cols-2 gap-4">
-      <img src="assets/img/civet.jpg" alt="Civet de sanglier aux olives" class="aspect-[2/3] w-full object-cover" loading="lazy">
-      <img src="assets/img/cannelloni.jpg" alt="Cannelloni au brocciu gratinés" class="mt-10 aspect-[2/3] w-full object-cover" loading="lazy">
+      <img src="assets/img/civet.jpg" alt="Civet de sanglier aux olives" class="aspect-[2/3] w-full object-cover" data-parallaxe="-0.06" loading="lazy">
+      <img src="assets/img/cannelloni.jpg" alt="Cannelloni au brocciu gratinés" class="mt-10 aspect-[2/3] w-full object-cover" data-parallaxe="0.08" loading="lazy">
     </div>
     <div class="apparait">
       <p class="text-[.72rem] font-bold uppercase tracking-[.3em] text-terre">L’histoire de NAPO</p>
@@ -352,16 +427,6 @@ tailwind.config = { theme: { extend: {
   </div>
 </section>
 
-<!-- Avis -->
-<section class="px-4 py-20 sm:px-8">
-  <div class="apparait mx-auto max-w-3xl text-center">
-    <p class="text-[.72rem] font-bold uppercase tracking-[.3em] text-terre">Vos avis</p>
-    <h2 class="mt-3 font-serif text-4xl font-semibold text-bordeaux sm:text-5xl">Ce sont nos convives qui en parlent le mieux.</h2>
-    <p class="mt-4 leading-relaxed text-nuit/80">Retrouvez les avis laissés après un repas au NAPO, et partagez le vôtre.</p>
-    <a href="https://www.google.com/maps/search/?api=1&query=NAPO%20restaurant%20corse%204%20rue%20Pierre%20Demours%2075017%20Paris" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center mt-7 bg-nuit text-white hover:bg-bordeaux">Lire les avis Google</a>
-  </div>
-</section>
-
 <!-- Infos pratiques -->
 <section id="infos" class="scroll-mt-20 px-4 py-20 sm:px-8 sm:py-28">
   <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2">
@@ -373,6 +438,7 @@ tailwind.config = { theme: { extend: {
         <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">Accès</dt><dd class="mt-1 text-lg">Métro Argentine (ligne 1) ou Ternes (ligne 2)<br><span class="text-sm text-nuit/70">Bus 43, arrêt Saint-Ferdinand</span></dd></div>
         <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">Téléphone</dt><dd class="mt-1 text-lg"><a class="lien" href="tel:+33180871315">01 80 87 13 15</a></dd></div>
         <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">E-mail</dt><dd class="mt-1 text-lg"><a class="lien" href="mailto:contact@lenapo.fr">contact@lenapo.fr</a></dd></div>
+        <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">Instagram</dt><dd class="mt-1 text-lg"><a class="lien" href="https://www.instagram.com/napo_restocorse/" target="_blank" rel="noopener">@napo_restocorse</a></dd></div>
         <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">Horaires</dt><dd class="mt-1 text-lg">Du lundi au vendredi, de 8 h à 2 h<br>Le samedi, de 17 h à 2 h<br><span class="text-sm text-nuit/70">Fermé le dimanche · salles Amuzetoi du lundi au samedi, de 14 h à 1 h</span></dd></div>
       </dl>
       <div class="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -380,7 +446,7 @@ tailwind.config = { theme: { extend: {
         <a href="https://www.google.com/maps/search/?api=1&query=4%2F6%20rue%20Pierre%20Demours%2075017%20Paris" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center border border-nuit/30 text-nuit hover:border-bordeaux hover:text-bordeaux">Itinéraire</a>
       </div>
     </div>
-    <div class="apparait min-h-[22rem] overflow-hidden border border-sable/60 bg-creme">
+    <div class="plan apparait min-h-[22rem] overflow-hidden border border-sable/60 bg-creme">
       <iframe title="Plan : NAPO, 4-6 rue Pierre Demours, 75017 Paris" src="https://maps.google.com/maps?q=4%20rue%20Pierre%20Demours%2075017%20Paris&z=16&output=embed" class="h-full min-h-[22rem] w-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
   </div>
@@ -388,6 +454,13 @@ tailwind.config = { theme: { extend: {
 </main>
 
 <footer class="bg-encre px-4 py-12 text-white/80 sm:px-8">
+  <div class="mx-auto mb-12 grid max-w-7xl gap-6 border-b border-white/10 pb-12 md:grid-cols-[1.2fr_1fr] md:items-end">
+    <div>
+      <p class="text-[.72rem] font-bold uppercase tracking-[.3em] text-sable">La lettre privée</p>
+      <p class="mt-3 font-serif text-3xl font-semibold leading-tight text-white sm:text-4xl">Dîners, DJ sets, quiz et soirées singulières : <em class="font-medium text-sable">soyez prévenu en premier.</em></p>
+    </div>
+    <a href="agenda.html" class="btn inline-flex items-center justify-center self-end border border-sable/70 text-white hover:bg-sable hover:text-nuit md:justify-self-end">M’inscrire à l’agenda</a>
+  </div>
   <div class="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-end md:justify-between">
     <div>
       <p class="font-serif text-4xl font-semibold tracking-[.18em] text-white">NAPO</p>
@@ -412,8 +485,7 @@ tailwind.config = { theme: { extend: {
   const entete = document.getElementById('entete');
   const majEntete = () => {
     const plein = window.scrollY > 40 || !menu.classList.contains('hidden');
-    entete.classList.toggle('bg-nuit', plein);
-    entete.classList.toggle('shadow-lg', plein);
+    entete.classList.toggle('defile', plein);
   };
   // Menu mobile
   const burger = document.getElementById('burger');
@@ -429,7 +501,8 @@ tailwind.config = { theme: { extend: {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') basculer(false); });
   window.addEventListener('scroll', majEntete, { passive: true });
   majEntete();
-  const majMarge = () => document.documentElement.style.setProperty('--entete', entete.firstElementChild.offsetHeight + 'px');
+  const hautEntete = () => entete.firstElementChild.offsetTop + entete.firstElementChild.offsetHeight + 8;
+  const majMarge = () => document.documentElement.style.setProperty('--entete', hautEntete() + 'px');
   window.addEventListener('resize', majMarge);
   majMarge();
   // Liens du menu : la page se cale sur la section, puis se recale si la mise en page a bougé
@@ -439,14 +512,14 @@ tailwind.config = { theme: { extend: {
     majMarge();
     cible.scrollIntoView({ behavior: doux ? 'smooth' : 'auto' });
     [450, 1100, 2000].forEach((ms) => setTimeout(() => {
-      const ecart = cible.getBoundingClientRect().top - entete.firstElementChild.offsetHeight + 1;
+      const ecart = cible.getBoundingClientRect().top - hautEntete() + 1;
       if (Math.abs(ecart) > 3) window.scrollBy({ top: ecart, behavior: 'auto' });
     }, ms));
   };
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href^="#"]'); if (!a || a.getAttribute('href').length < 2) return;
     const id = a.getAttribute('href').slice(1); if (!document.getElementById(id)) return;
-    e.preventDefault(); history.pushState(null, '', '#' + id); allerA(id, !matchMedia('(prefers-reduced-motion: reduce)').matches);
+    e.preventDefault(); if (a.dataset.onglet && id === 'carte') choisir(a.dataset.onglet); history.pushState(null, '', '#' + id); allerA(id, !matchMedia('(prefers-reduced-motion: reduce)').matches);
   });
   window.addEventListener('load', () => { if (location.hash.length > 1) allerA(decodeURIComponent(location.hash.slice(1)), false); });
 
@@ -454,9 +527,11 @@ tailwind.config = { theme: { extend: {
   const C = window.CARTE;
   const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const badge = '<span class="ml-2 whitespace-nowrap rounded-full border border-or/60 px-2 py-0.5 align-middle font-sans text-[.6rem] font-bold uppercase tracking-wider text-or">Fait maison</span>';
-  const plat = (p) => `<li class="group border-b border-sable/50 py-4">
+  const picto = (lettre, titre) => `<abbr title="${titre}" class="ml-1.5 inline-grid h-5 w-5 place-items-center rounded-full border border-terre/50 align-middle font-sans text-[.58rem] font-bold not-italic text-terre no-underline">${lettre}</abbr>`;
+  const regimes = (p) => (p.vege ? picto('V', 'Végétarien') : '') + (p.sans_gluten ? picto('SG', 'Sans gluten') : '');
+  const plat = (p) => `<li class="group border-b border-sable/50 py-4 transition-colors hover:bg-white/60 sm:px-3">
     <div class="flex items-baseline gap-3">
-      <h4 class="font-serif text-xl font-semibold leading-tight text-nuit transition-colors group-hover:text-bordeaux sm:text-2xl">${esc(p.nom)}${p.maison ? badge : ''}</h4>
+      <h4 class="font-serif text-xl font-semibold leading-tight text-nuit transition-colors group-hover:text-bordeaux sm:text-2xl">${esc(p.nom)}${p.maison ? badge : ''}${regimes(p)}</h4>
       <span class="mb-1 hidden flex-1 border-b border-dotted border-or/50 sm:block"></span>
       <span class="ml-auto whitespace-nowrap font-serif text-xl font-semibold text-bordeaux sm:text-2xl">${esc(p.prix)}</span>
     </div>
@@ -506,6 +581,42 @@ tailwind.config = { theme: { extend: {
     choisir(rubriques[j].id, true);
   });
   choisir('spuntinu');
+
+  // Réservation rapide : ouvre la page Zenchef avec la date et le nombre de convives choisis
+  const fResa = document.getElementById('resa');
+  const fDate = document.getElementById('resa-date'), fHeure = document.getElementById('resa-heure'), fPax = document.getElementById('resa-pax'), fInfo = document.getElementById('resa-info');
+  const iso = (d) => new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const auj = new Date(); fDate.min = iso(auj);
+  const demain = new Date(auj); if (auj.getHours() >= 21) demain.setDate(demain.getDate() + 1); if (demain.getDay() === 0) demain.setDate(demain.getDate() + 1);
+  fDate.value = iso(demain);
+  const creneaux = (samedi) => { const h = []; if (!samedi) for (let m = 12 * 60; m <= 14 * 60; m += 30) h.push(m); for (let m = 19 * 60; m <= 22 * 60 + 30; m += 30) h.push(m); return h.map((m) => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0')); };
+  const majCreneaux = () => {
+    const jour = new Date(fDate.value + 'T12:00').getDay(); const avant = fHeure.value;
+    const liste = creneaux(jour === 6);
+    fHeure.innerHTML = liste.map((h) => `<option value="${h}">${h.replace(':', ' h ')}</option>`).join('');
+    fHeure.value = liste.includes(avant) ? avant : (liste.includes('20:00') ? '20:00' : liste[0]);
+    const ferme = jour === 0; fResa.querySelector('button').disabled = ferme;
+    fResa.querySelector('button').classList.toggle('opacity-50', ferme);
+    document.getElementById('resa-msg').textContent = ferme ? 'Le NAPO est fermé le dimanche : choisissez un autre jour.' : 'Confirmation immédiate sur notre page de réservation.';
+  };
+  fPax.innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">${i + 1} ${i ? 'personnes' : 'personne'}</option>`).join('');
+  fPax.value = '2';
+  fDate.addEventListener('change', majCreneaux); majCreneaux();
+  fResa.addEventListener('submit', (e) => {
+    e.preventDefault(); if (!fDate.value || new Date(fDate.value + 'T12:00').getDay() === 0) return;
+    const url = new URL('https://bookings.zenchef.com/results');
+    url.search = new URLSearchParams({ rid: '388299', pid: '1001', lang: 'fr', day: fDate.value, pax: fPax.value, time: fHeure.value }).toString();
+    window.open(url.toString(), '_blank', 'noopener');
+  });
+
+  // Parallaxe légère
+  const plx = [...document.querySelectorAll('[data-parallaxe]')];
+  if (plx.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let attente = false;
+    const majPlx = () => { attente = false; const h = innerHeight; plx.forEach((el) => { const r = el.getBoundingClientRect(); if (r.bottom < -200 || r.top > h + 200) return; const v = parseFloat(el.dataset.parallaxe); el.style.transform = `translate3d(0, ${((r.top + r.height / 2 - h / 2) * -v).toFixed(1)}px, 0)` + (el.closest('#haut') ? ' scale(1.08)' : ''); }); };
+    addEventListener('scroll', () => { if (!attente) { attente = true; requestAnimationFrame(majPlx); } }, { passive: true });
+    majPlx();
+  }
 
   // Apparition douce au défilement
   const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('vu'); io.unobserve(e.target); } }), { threshold: 0.12 });
