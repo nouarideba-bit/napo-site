@@ -227,7 +227,7 @@
     billet();
   };
 
-  const avancer = () => { lire(); const e = D.etapes[i]; const err = erreur(e); if (err) { $('erreur').textContent = err; return; } i += 1; afficher(1); $('titre').focus({ preventScroll: true }); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const avancer = () => { lire(); const e = D.etapes[i]; if (!e) return; const err = erreur(e); if (err) { $('erreur').textContent = err; return; } i += 1; afficher(1); $('titre').focus({ preventScroll: true }); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
   $('etape').addEventListener('click', (ev) => {
     const b = ev.target.closest('button'); if (!b) return; const e = D.etapes[i]; if (!e) return;
