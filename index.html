@@ -187,6 +187,7 @@ tailwind.config = { theme: { extend: {
     <div id="panneau" role="tabpanel" tabindex="0" class="mt-8 min-h-[24rem]"></div>
 
     <p class="mt-8 flex items-center justify-center gap-2 text-sm text-nuit/70"><span class="rounded-full border border-or/60 px-2 py-0.5 text-[.65rem] font-bold uppercase tracking-wider text-or">Fait maison</span> Plat élaboré sur place à partir de produits bruts.</p>
+    <p class="mt-2 text-center text-sm text-nuit/70">Prix en euros, taxes et service compris · Liste des allergènes disponible sur demande auprès de notre équipe.</p>
 
     <div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <a class="btn inline-flex items-center justify-center border border-nuit/25 bg-white text-nuit hover:border-bordeaux hover:text-bordeaux" href="assets/cartes/napo-u-spuntinu.pdf" target="_blank" rel="noopener">U Spuntinu (PDF)</a>
@@ -502,7 +503,10 @@ tailwind.config = { theme: { extend: {
       </div>
     </div>
     <div class="plan apparait min-h-[22rem] overflow-hidden border border-sable/60 bg-creme">
-      <iframe title="Plan : NAPO, 4-6 rue Pierre Demours, 75017 Paris" src="https://maps.google.com/maps?q=4%20rue%20Pierre%20Demours%2075017%20Paris&z=16&output=embed" class="h-full min-h-[22rem] w-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div id="plan" class="flex h-full min-h-[22rem] w-full flex-col items-center justify-center gap-4 bg-[url('assets/img/salle2.jpg')] bg-cover bg-center p-8 text-center grayscale">
+        <button type="button" data-src="https://maps.google.com/maps?q=4%20rue%20Pierre%20Demours%2075017%20Paris&z=16&output=embed" class="btn inline-flex items-center justify-center bg-nuit text-white hover:bg-bordeaux">Afficher le plan</button>
+        <p class="max-w-xs bg-white/85 px-3 py-2 text-xs text-nuit">Le plan est fourni par Google Maps, qui peut déposer des cookies. <a class="lien text-bordeaux" href="mentions-legales.html">En savoir plus</a></p>
+      </div>
     </div>
   </div>
 </section>
@@ -636,6 +640,12 @@ tailwind.config = { theme: { extend: {
     choisir(rubriques[j].id, true);
   });
   choisir('spuntinu');
+
+  // Plan Google Maps chargé seulement sur demande (pas de cookies Google avant le clic)
+  const plan = document.getElementById('plan');
+  plan.querySelector('button').addEventListener('click', (e) => {
+    plan.outerHTML = `<iframe title="Plan : NAPO, 4-6 rue Pierre Demours, 75017 Paris" src="${e.currentTarget.dataset.src}" class="h-full min-h-[22rem] w-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+  });
 
   // Réservation rapide : ouvre la page Zenchef avec la date et le nombre de convives choisis
   const fResa = document.getElementById('resa');
