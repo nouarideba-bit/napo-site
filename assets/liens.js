@@ -85,7 +85,10 @@
     if (href.startsWith('mailto:')) {
       // Le formulaire pas à pas a déjà son propre écran de secours
       if (a.id === 'envoyer') return;
-      setTimeout(() => { if (document.visibilityState === 'visible' && document.hasFocus()) secoursMail(href); }, 900);
+      // Si la messagerie s'ouvre, la page perd le focus ou passe en arrière-plan : sinon, on affiche l'adresse
+      let parti = false; const marque = () => { parti = true; };
+      window.addEventListener('blur', marque, { once: true }); document.addEventListener('visibilitychange', marque, { once: true });
+      setTimeout(() => { window.removeEventListener('blur', marque); document.removeEventListener('visibilitychange', marque); if (!parti) secoursMail(href); }, 1200);
       return;
     }
     if (a.target === '_blank' && /^https?:/.test(href)) {
