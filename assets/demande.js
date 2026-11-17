@@ -22,11 +22,15 @@
       </div><p class="mt-3 text-center text-sm uppercase tracking-[.25em] text-sable sm:text-left">${esc(e.unite)}</p>
       <div class="mt-6 flex flex-wrap justify-center gap-2 sm:justify-start">${e.raccourcis.map((n) => `<button type="button" data-fixe="${n}" class="border border-white/15 px-4 py-2 text-sm transition hover:border-sable hover:text-sable">${n}</button>`).join('')}</div>`,
     salles: (e) => { const n = personnes(), cap = capacite(e), conseil = suggestion(e, n);
-      return `<div class="grid gap-3 sm:grid-cols-${e.salles.length}" role="group" aria-label="Salles">${e.salles.map((sa) => { const a = etat[e.id].includes(sa.nom); return `<button type="button" data-salle="${esc(sa.nom)}" aria-pressed="${a}" class="relative flex min-h-[11rem] flex-col items-center justify-center gap-2 border px-3 py-6 text-center transition duration-300 hover:-translate-y-1 ${a ? 'border-sable bg-gradient-to-b from-bordeaux to-bordeaux/40 text-white shadow-[0_0_40px_-8px_#a83c2d]' : 'border-white/15 bg-white/[.03] text-white/55 hover:border-sable/60'}">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5v4M8.5 21.5h7"/></svg>
-          <span class="font-serif text-2xl font-semibold leading-tight">${esc(sa.nom)}</span>
-          <span class="text-sm">${sa.min} à ${sa.max} personnes</span>
-          <span class="text-[.65rem] font-bold uppercase tracking-[.2em] text-sable">${a ? 'Pour vous' : conseil.includes(sa.nom) ? 'Conseillée' : '&nbsp;'}</span></button>`; }).join('')}</div>
+      return `<div class="grid gap-3 sm:grid-cols-${e.salles.length}" role="group" aria-label="Salles">${e.salles.map((sa) => { const a = etat[e.id].includes(sa.nom); return `<button type="button" data-salle="${esc(sa.nom)}" aria-pressed="${a}" class="group relative flex min-h-[13rem] flex-col justify-end overflow-hidden border text-left transition duration-300 hover:-translate-y-1 ${a ? 'border-sable shadow-[0_0_40px_-8px_#a83c2d]' : 'border-white/15 hover:border-sable/60'}">
+          ${sa.photo ? `<img src="${sa.photo}" alt="" class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105 ${a ? '' : 'opacity-45 grayscale-[.4]'}">` : ''}
+          <span class="absolute inset-0 bg-gradient-to-t from-encre via-encre/60 to-transparent"></span>
+          <span class="absolute right-3 top-3 grid h-7 w-7 place-items-center border text-sm ${a ? 'border-sable bg-sable text-nuit' : 'border-white/50 bg-encre/50 text-transparent'}" aria-hidden="true">✓</span>
+          <span class="relative block p-4">
+            <span class="block font-serif text-2xl font-semibold leading-tight text-white">${esc(sa.nom)}</span>
+            <span class="block text-sm text-white/80">${sa.min} à ${sa.max} personnes</span>
+            <span class="mt-1 block min-h-[1rem] text-[.65rem] font-bold uppercase tracking-[.2em] text-sable">${a ? 'Pour vous' : conseil.includes(sa.nom) ? 'Conseillée' : ''}</span>
+          </span></button>`; }).join('')}</div>
       <p class="mt-5 font-serif text-xl text-sable">${etat[e.id].length ? `${etat[e.id].length} salle${etat[e.id].length > 1 ? 's' : ''} · jusqu’à ${cap} personnes` : 'Aucune salle choisie'} <span class="text-white/55">pour votre groupe de ${n}</span></p>`; },
     date: (e) => `<label class="block text-xs font-bold uppercase tracking-[.2em] text-sable" for="date">Date souhaitée</label>
       <input id="date" type="date" min="${aujourdhui}" value="${etat.date || ''}" class="${champ} [color-scheme:dark]">
