@@ -32,7 +32,7 @@
       <input id="date" type="date" min="${aujourdhui}" value="${etat.date || ''}" class="${champ} [color-scheme:dark]">
       <p class="mt-8 text-xs font-bold uppercase tracking-[.2em] text-sable">${esc(e.libelleMoment)}</p>
       <div class="mt-3 flex flex-wrap gap-2">${e.moments.map((m) => `<button type="button" data-moment="${esc(m)}" aria-pressed="${etat.moment === m}" class="border px-5 py-3 text-sm font-semibold transition ${etat.moment === m ? 'border-sable bg-sable text-nuit' : 'border-white/20 hover:border-sable hover:text-sable'}">${esc(m)}</button>`).join('')}</div>
-      <label class="mt-8 flex cursor-pointer items-center gap-3 text-white/75"><input id="flexible" type="checkbox" ${etat.flexible ? 'checked' : ''} class="h-5 w-5 border-white/40 bg-transparent text-bordeaux focus:ring-sable"> Je suis flexible sur la date</label>${D.tarif ? `<p class="mt-6 text-sm text-white/60">${D.tarif.semaine} € par personne du lundi au vendredi · ${D.tarif.weekend} € par personne le samedi et le dimanche.</p>` : ''}`,
+      <label class="mt-8 flex cursor-pointer items-center gap-3 text-white/75"><input id="flexible" type="checkbox" ${etat.flexible ? 'checked' : ''} class="h-5 w-5 border-white/40 bg-transparent text-bordeaux focus:ring-sable"> Je suis flexible sur la date</label>${D.tarif ? `<p class="mt-6 text-sm text-white/60">Par personne : ${D.tarif.semaine} € du lundi au vendredi · ${D.tarif.weekend} € le samedi et le dimanche${D.tarif.pointe ? ` · ${D.tarif.pointe} € le vendredi et le samedi à partir de 19 h` : ''}.</p>` : ''}`,
     contact: () => `<div class="grid gap-6 sm:grid-cols-2">
         <div><label class="text-xs font-bold uppercase tracking-[.2em] text-sable" for="nom">Nom</label><input id="nom" autocomplete="name" value="${esc(etat.nom || '')}" class="${champ}" placeholder="Votre nom"></div>
         <div><label class="text-xs font-bold uppercase tracking-[.2em] text-sable" for="tel">Téléphone</label><input id="tel" type="tel" autocomplete="tel" value="${esc(etat.tel || '')}" class="${champ}" placeholder="06 12 34 56 78"></div>
@@ -56,8 +56,10 @@
   // Estimation : tarif par personne, selon que la date tombe en semaine ou le week-end
   const estimation = () => {
     if (!D.tarif || !etat.date || !personnes()) return '';
-    const j = new Date(etat.date + 'T12:00').getDay(), we = j === 0 || j === 6, prix = we ? D.tarif.weekend : D.tarif.semaine;
-    return `${personnes() * prix} € (${personnes()} × ${prix} €, tarif ${we ? 'week-end' : 'semaine'})`;
+    // Pointe : arrivée à 19 h ou plus tard le vendredi ou le samedi
+    const j = new Date(etat.date + 'T12:00').getDay(), we = j === 0 || j === 6, h = parseInt(etat.moment, 10), soir = etat.moment && !(h < 19);
+    const pointe = D.tarif.pointe && soir && (j === 5 || j === 6), prix = pointe ? D.tarif.pointe : we ? D.tarif.weekend : D.tarif.semaine;
+    return `${personnes() * prix} € (${personnes()} × ${prix} €, tarif ${pointe ? 'vendredi et samedi soir' : we ? 'week-end' : 'semaine'})`;
   };
 
   // Ce que chaque étape apporte au récapitulatif
