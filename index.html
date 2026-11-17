@@ -43,7 +43,7 @@ tailwind.config = { theme: { extend: {
   @media (prefers-reduced-motion: reduce) { .amuz-l, .amuz-o svg { animation: none; } }
 </style>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Restaurant","name":"NAPO","url":"https://lenapo.fr/","email":"contact@lenapo.fr","telephone":"+33180871315","servesCuisine":"Cuisine corse contemporaine","image":"https://lenapo.fr/assets/img/hero.webp","menu":"https://lenapo.fr/#carte","address":{"@type":"PostalAddress","streetAddress":"4-6 rue Pierre Demours","postalCode":"75017","addressLocality":"Paris","addressCountry":"FR"},"potentialAction":{"@type":"ReserveAction","target":"https://bookings.zenchef.com/results?rid=388299&pid=1001&lang=fr"}}
+{"@context":"https://schema.org","@type":"Restaurant","name":"NAPO","url":"https://lenapo.fr/","email":"contact@lenapo.fr","telephone":"+33180871315","servesCuisine":"Cuisine corse contemporaine","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"14:00","closes":"01:00"}],"image":"https://lenapo.fr/assets/img/hero.webp","menu":"https://lenapo.fr/#carte","address":{"@type":"PostalAddress","streetAddress":"4-6 rue Pierre Demours","postalCode":"75017","addressLocality":"Paris","addressCountry":"FR"},"potentialAction":{"@type":"ReserveAction","target":"https://bookings.zenchef.com/results?rid=388299&pid=1001&lang=fr"}}
 </script>
 </head>
 <body class="bg-white font-sans text-nuit antialiased lining-nums">
@@ -101,7 +101,7 @@ tailwind.config = { theme: { extend: {
     <div class="apparait text-center">
       <p class="text-[.72rem] font-bold uppercase tracking-[.3em] text-terre">La Carte</p>
       <h2 class="mt-3 font-serif text-4xl font-semibold text-bordeaux sm:text-6xl">Entre mer <em class="font-medium text-terre">et maquis.</em></h2>
-      <p class="mx-auto mt-4 max-w-xl leading-relaxed text-nuit/80">À partager au milieu de la table, à la carte ou en menu dégustation.</p>
+      <p class="mx-auto mt-4 max-w-xl leading-relaxed text-nuit/80">À partager au milieu de la table, à la carte ou en menu dégustation, avec les vins corses de la maison.</p>
     </div>
 
     <div id="onglets" role="tablist" aria-label="Rubriques de la carte" class="mt-10 flex gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:justify-center"></div>
@@ -109,10 +109,11 @@ tailwind.config = { theme: { extend: {
 
     <p class="mt-8 flex items-center justify-center gap-2 text-sm text-nuit/70"><span class="rounded-full border border-or/60 px-2 py-0.5 text-[.65rem] font-bold uppercase tracking-wider text-or">Fait maison</span> Plat élaboré sur place à partir de produits bruts.</p>
 
-    <div class="mt-10 grid gap-3 sm:grid-cols-3">
+    <div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <a class="btn inline-flex items-center justify-center border border-nuit/25 bg-white text-nuit hover:border-bordeaux hover:text-bordeaux" href="assets/cartes/napo-u-spuntinu.pdf" target="_blank" rel="noopener">U Spuntinu (PDF)</a>
       <a class="btn inline-flex items-center justify-center border border-nuit/25 bg-white text-nuit hover:border-bordeaux hover:text-bordeaux" href="assets/cartes/napo-carte.pdf" target="_blank" rel="noopener">La carte à table (PDF)</a>
       <a class="btn inline-flex items-center justify-center border border-nuit/25 bg-white text-nuit hover:border-bordeaux hover:text-bordeaux" href="assets/cartes/napo-menus-degustation.pdf" target="_blank" rel="noopener">Menus dégustation (PDF)</a>
+      <a class="btn inline-flex items-center justify-center border border-nuit/25 bg-white text-nuit hover:border-bordeaux hover:text-bordeaux" href="assets/cartes/napo-vins-boissons.pdf" target="_blank" rel="noopener">Vins &amp; boissons (PDF)</a>
     </div>
   </div>
 </section>
@@ -370,7 +371,7 @@ tailwind.config = { theme: { extend: {
         <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">Accès</dt><dd class="mt-1 text-lg">Métro Argentine (ligne 1) ou Ternes (ligne 2)<br><span class="text-sm text-nuit/70">Bus 43, arrêt Saint-Ferdinand</span></dd></div>
         <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">Téléphone</dt><dd class="mt-1 text-lg"><a class="lien" href="tel:+33180871315">01 80 87 13 15</a></dd></div>
         <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">E-mail</dt><dd class="mt-1 text-lg"><a class="lien" href="mailto:contact@lenapo.fr">contact@lenapo.fr</a></dd></div>
-        <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">Horaires</dt><dd class="mt-1 text-lg">Restaurant : les créneaux ouverts s’affichent lors de la réservation en ligne.<br>Salles AMUZOIRE : du lundi au samedi, de 14 h à 1 h.</dd></div>
+        <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">Horaires</dt><dd class="mt-1 text-lg">Du lundi au samedi, de 14 h à 1 h du matin<br><span class="text-sm text-nuit/70">Fermé le dimanche · restaurant et salles Amuzoire</span></dd></div>
       </dl>
       <div class="mt-9 flex flex-col gap-3 sm:flex-row">
         <a href="https://bookings.zenchef.com/results?rid=388299&pid=1001&lang=fr" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center bg-bordeaux text-white hover:bg-terre">Réserver une table</a>
@@ -389,6 +390,7 @@ tailwind.config = { theme: { extend: {
     <div>
       <p class="font-serif text-4xl font-semibold tracking-[.18em] text-white">NAPO</p>
       <p class="mt-2 text-sm">Cuisine corse contemporaine · 4-6 rue Pierre Demours, 75017 Paris</p>
+      <p class="mt-1 text-sm">Du lundi au samedi, de 14 h à 1 h · fermé le dimanche</p>
       <p class="mt-1 font-serif text-lg italic text-sable">Per l’onore è per a Corsica</p>
     </div>
     <nav class="flex flex-wrap gap-x-6 gap-y-2 text-sm" aria-label="Pied de page">
@@ -448,12 +450,16 @@ tailwind.config = { theme: { extend: {
       <p class="mt-2 border-b border-sable/60 pb-4 text-center font-serif text-4xl font-semibold text-nuit">${esc(m.prix)}</p>
       <ol class="mt-4 space-y-2 text-[.95rem]">${m.plats.map((p, i) => `<li class="flex gap-3"><span class="w-5 shrink-0 text-right font-serif font-semibold text-or">${i + 1}.</span><span>${esc(p)}</span></li>`).join('')}</ol>
     </article>`).join('')}</div>`;
+  const pages = (liste) => `<div class="grid gap-5 ${liste.length > 1 ? 'sm:grid-cols-2' : 'mx-auto max-w-xl'}">${liste.map(([f, alt]) => `<a href="assets/img/cartes/${f}.jpg" target="_blank" rel="noopener" class="block border border-sable/70 bg-white shadow-sm transition hover:-translate-y-1 hover:border-bordeaux hover:shadow-xl"><img src="assets/img/cartes/${f}.jpg" alt="Carte du NAPO : ${esc(alt)}" class="w-full" loading="lazy"></a>`).join('')}</div>
+    <p class="mt-5 text-center text-sm text-nuit/70">Touchez une page pour l’agrandir. L’abus d’alcool est dangereux pour la santé, à consommer avec modération.</p>`;
   const rubriques = [
     { id: 'spuntinu', nom: 'U Spuntinu', rendu: () => `<p class="mb-8 text-center text-sm uppercase tracking-[.2em] text-nuit/70">La carte à partager</p><div>${C.spuntinu.sections.map((s) => section(s)).join('')}</div>` },
     { id: 'entrees', nom: 'Entrées', rendu: () => section(C.carte.sections[0], false) },
     { id: 'plats', nom: 'Plats', rendu: () => section(C.carte.sections[1], false) },
     { id: 'desserts', nom: 'Desserts & fromages', rendu: () => section(C.carte.sections[2], false) },
     { id: 'degustation', nom: 'Menus dégustation', rendu: degustation },
+    { id: 'vins', nom: 'Vins', large: true, rendu: () => pages([['vins-corses', 'Vins corses : blancs, rosés et rouges, au verre et à la bouteille'], ['vins-blancs', 'Vins blancs'], ['vins-rouges', 'Vins rouges'], ['vins-roses-champagnes', 'Vins rosés, pétillant et champagnes']]) },
+    { id: 'boissons', nom: 'Boissons', large: true, rendu: () => pages([['boissons', 'Boissons chaudes, softs, eaux, bières, apéritifs, cocktails, digestifs et spiritueux']]) },
   ];
   const onglets = document.getElementById('onglets');
   const panneau = document.getElementById('panneau');
@@ -467,7 +473,7 @@ tailwind.config = { theme: { extend: {
       if (actif && focus) b.focus();
     });
     panneau.setAttribute('aria-labelledby', 'onglet-' + r.id);
-    panneau.innerHTML = `<div class="mx-auto ${r.id === 'degustation' ? '' : 'max-w-3xl'}">${r.rendu()}</div>`;
+    panneau.innerHTML = `<div class="mx-auto ${r.id === 'degustation' || r.large ? '' : 'max-w-3xl'}">${r.rendu()}</div>`;
   };
   onglets.innerHTML = rubriques.map((r) => `<button role="tab" id="onglet-${r.id}" data-id="${r.id}" aria-controls="panneau">${esc(r.nom)}</button>`).join('');
   onglets.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) choisir(b.dataset.id); });
