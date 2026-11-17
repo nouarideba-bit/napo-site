@@ -59,12 +59,12 @@
   };
   // Estimation : tarif par personne, selon que la date tombe en semaine ou le week-end
   const estimation = () => {
-    if (!D.tarif || !etat.date || !personnes()) return '';
+    if (!D.tarif || !personnes() || (!etat.date && !etat.flexible)) return '';
     // Pointe : arrivée à 19 h ou plus tard le vendredi ou le samedi
-    const j = new Date(etat.date + 'T12:00').getDay(), we = j === 0 || j === 6, h = parseInt(etat.moment, 10), soir = etat.moment && !(h < 19);
+    const j = etat.date ? new Date(etat.date + 'T12:00').getDay() : 1, we = j === 0 || j === 6, h = parseInt(etat.moment, 10), soir = etat.moment && !(h < 19);
     const pointe = D.tarif.pointe && soir && (j === 5 || j === 6), prix = pointe ? D.tarif.pointe : we ? D.tarif.weekend : D.tarif.semaine;
     const n = personnes(), duree = D.etapes.flatMap((e) => e.choix || []).find((c) => c.heures && Object.values(etat).includes(c.nom)), h1 = duree ? duree.heures : 1;
-    const lignes = [`${n} × ${prix} €${h1 > 1 ? ` × ${h1} h` : ''}, tarif ${pointe ? 'vendredi et samedi soir' : we ? 'samedi' : 'semaine'}`];
+    const lignes = [`${n} × ${prix} €${h1 > 1 ? ` × ${h1} h` : ''}, tarif ${pointe ? 'vendredi et samedi soir' : we ? 'samedi' : 'semaine'}${etat.date ? '' : ', date à préciser'}`];
     let total = n * prix * h1;
     // Ce que la table ajoute, aux prix de la carte
     const table = D.etapes.flatMap((e) => e.choix || []).find((c) => c.ajout && Object.values(etat).includes(c.nom));
@@ -75,7 +75,7 @@
   let dernierTotal = 0;
   // Annulation gratuite : jusqu'à N heures avant l'heure d'arrivée
   const limiteAnnulation = () => {
-    if (!D.conditions || !etat.date) return '';
+    if (!D.conditions || !etat.date) return D.conditions ? '72 h avant la date convenue' : '';
     const h = parseInt(etat.moment, 10), d = new Date(`${etat.date}T${String(isNaN(h) ? 14 : h).padStart(2, '0')}:00`);
     d.setHours(d.getHours() - D.conditions.annulationHeures);
     return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + ' à ' + d.getHours() + ' h';
@@ -87,7 +87,7 @@
     const ok = (u) => (/^https:\/\/buy\.stripe\.com\//.test(u || '') ? u : ''), l = (D.conditions && D.conditions.paiement) || {}, j = etat.date ? new Date(etat.date + 'T12:00').getDay() : 1, h = parseInt(etat.moment, 10);
     return ok((j === 5 || j === 6) && !(h < 19) ? l.pointe : j === 6 ? l.weekend : l.semaine);
   };
-  const messageGroupe = () => [`${etat.nom || 'On'} nous réserve une salle Amuzetoi au NAPO (4-6 rue Pierre Demours, Paris 17).`, `${dateLisible(etat.date)}, ${etat.moment}.`, `Ta part : ${euros(part())} (${personnes()} personnes, total ${euros(dernierTotal)}).`, lienPaiement() ? `Pour payer ta part : ${lienPaiement()}` : 'Le lien de paiement arrive avec la confirmation du NAPO.', `Annulation gratuite jusqu’au ${limiteAnnulation()}.`].join('\n');
+  const messageGroupe = () => [`${etat.nom || 'On'} nous réserve une salle Amuzetoi au NAPO (4-6 rue Pierre Demours, Paris 17).`, `${etat.date ? dateLisible(etat.date) : 'Date à fixer ensemble'}, ${etat.moment}.`, `Ta part : ${euros(part())} (${personnes()} personnes, total ${euros(dernierTotal)}).`, lienPaiement() ? `Pour payer ta part : ${lienPaiement()}` : 'Le lien de paiement arrive avec la confirmation du NAPO.', `Annulation gratuite ${etat.date ? 'jusqu’au ' : ''}${limiteAnnulation()}.`].join('\n');
 
   // Ce que chaque étape apporte au récapitulatif
   const valeur = (e) => {
@@ -109,10 +109,10 @@
       if (n < min) return `Il faut au moins ${min} personnes pour ces salles : retirez-en une.`;
     }
     if (e.type === 'date') {
-      if (!etat.date) return 'Choisissez une date.';
-      if (etat.date < aujourdhui) return 'Cette date est déjà passée.';
-      if ((e.joursFermes || []).includes(new Date(etat.date + 'T12:00').getDay())) return e.messageFerme;
-      if (!etat.moment) return 'Précisez le moment.';
+      if (!etat.date && !etat.flexible) return 'Choisissez une date, ou cochez « Je suis flexible sur la date ».';
+      if (etat.date && etat.date < aujourdhui) return 'Cette date est déjà passée.';
+      if (etat.date && (e.joursFermes || []).includes(new Date(etat.date + 'T12:00').getDay())) return e.messageFerme;
+      if (!etat.moment) return 'Choisissez une heure.';
     }
     if (e.type === 'contact') {
       if (!etat.nom || etat.nom.trim().length < 2) return 'Indiquez votre nom.';
@@ -127,7 +127,7 @@
     const e = D.etapes[i];
     if ($('nb') && e) etat[e.id] = parseInt($('nb').value, 10) || 0;
   };
-  const texte = () => [D.intro, '', ...D.etapes.map((e) => `${e.resume} : ${valeur(e) || '-'}`), estimation() ? `Estimation : ${estimation()}` : '', D.conditions && estimation() ? `Paiement partagé : ${euros(part())} par personne\nAnnulation gratuite jusqu’au ${limiteAnnulation()}` : '', etat.mot ? `\nMessage : ${etat.mot}` : ''].join('\n').trim();
+  const texte = () => [D.intro, '', ...D.etapes.map((e) => `${e.resume} : ${valeur(e) || '-'}`), estimation() ? `Estimation : ${estimation()}` : '', D.conditions && estimation() ? `Paiement partagé : ${euros(part())} par personne\nAnnulation gratuite ${etat.date ? 'jusqu’au ' : ''}${limiteAnnulation()}` : '', etat.mot ? `\nMessage : ${etat.mot}` : ''].join('\n').trim();
 
   const billet = () => {
     $('billet').innerHTML = D.etapes.map((e, k) => { const v = valeur(e); const fait = k < i || (k === i && v && e.type !== 'contact');
@@ -147,12 +147,12 @@
         <h2 class="mt-4 font-serif text-4xl font-semibold leading-none sm:text-6xl" tabindex="-1" id="titre">${esc(D.finTitre)}</h2>
         <p class="mt-5 max-w-xl leading-relaxed text-white/75">${esc(D.finTexte)}</p>
         <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-          <a href="mailto:${D.email}?subject=${sujet}&body=${corps}" class="btn inline-flex items-center justify-center bg-bordeaux text-white hover:bg-terre">Envoyer ma demande</a>
+          <a href="mailto:${D.email}?subject=${sujet}&body=${corps}" id="envoyer" class="btn inline-flex items-center justify-center bg-bordeaux text-white hover:bg-terre">Envoyer ma demande</a>
           <button type="button" id="copier" class="btn inline-flex items-center justify-center border border-white/40 text-white hover:bg-white hover:text-nuit">Copier le récapitulatif</button>
         </div>
         ${D.conditions ? `<div class="mt-8 grid gap-3 sm:grid-cols-3">
           <div class="border border-white/15 bg-white/[.04] p-4"><p class="text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Paiement partagé</p><p class="mt-1 font-serif text-3xl font-semibold">${euros(part())}</p><p class="text-sm text-white/65">par personne, pour ${personnes()}</p></div>
-          <div class="border border-white/15 bg-white/[.04] p-4"><p class="text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Annulation gratuite</p><p class="mt-1 font-serif text-xl font-semibold leading-tight">jusqu’au ${limiteAnnulation()}</p><p class="text-sm text-white/65">${D.conditions.annulationHeures} h avant votre arrivée</p></div>
+          <div class="border border-white/15 bg-white/[.04] p-4"><p class="text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Annulation gratuite</p><p class="mt-1 font-serif text-xl font-semibold leading-tight">${etat.date ? 'jusqu’au ' : ''}${limiteAnnulation()}</p><p class="text-sm text-white/65">${etat.date ? `${D.conditions.annulationHeures} h avant votre arrivée` : 'date à fixer avec le NAPO'}</p></div>
           <div class="border border-white/15 bg-white/[.04] p-4"><p class="text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Prolongation</p><p class="mt-1 font-serif text-xl font-semibold leading-tight">possible sur place</p><p class="text-sm text-white/65">selon les disponibilités</p></div>
         </div>
         <div class="mt-4 border border-sable/50 bg-sable/10 p-5">
@@ -163,10 +163,35 @@
             ${lienPaiement() ? `<a href="${lienPaiement()}" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center border border-white/40 text-white hover:bg-white hover:text-nuit">Payer ma part</a>` : `<span class="btn inline-flex cursor-not-allowed items-center justify-center border border-white/20 text-white/45" aria-disabled="true">Payer ma part · bientôt en ligne</span>`}
           </div>
         </div>` : ''}
+        <div id="apres" class="mt-8 hidden border border-sable bg-encre/80 p-6" role="status" tabindex="-1">
+          <p class="font-serif text-3xl font-semibold">Votre messagerie s’est ouverte ?</p>
+          <p class="mt-2 text-white/75">Appuyez sur « Envoyer » dans le message déjà rédigé. C’est tout.</p>
+          <ol class="mt-5 grid gap-3 sm:grid-cols-3">
+            <li class="border-l-2 border-sable pl-3"><span class="block text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Sous 24 h</span><span class="text-sm text-white/80">Le NAPO confirme la disponibilité par téléphone ou par e-mail.</span></li>
+            <li class="border-l-2 border-sable pl-3"><span class="block text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Ensuite</span><span class="text-sm text-white/80">${D.conditions ? 'Vous recevez le lien de paiement, à partager avec votre groupe.' : 'On construit ensemble le déroulé de votre événement.'}</span></li>
+            <li class="border-l-2 border-sable pl-3"><span class="block text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Le jour J</span><span class="text-sm text-white/80">Rendez-vous au 4-6 rue Pierre Demours, métro Ternes ou Argentine.</span></li>
+          </ol>
+          <p class="mt-6 font-serif text-xl font-semibold">Rien ne s’est ouvert ?</p>
+          <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=${D.email}&su=${sujet}&body=${corps}" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center border border-white/40 text-white hover:bg-white hover:text-nuit">Envoyer avec Gmail</a>
+            <a href="https://outlook.live.com/mail/0/deeplink/compose?to=${D.email}&subject=${sujet}&body=${corps}" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center border border-white/40 text-white hover:bg-white hover:text-nuit">Envoyer avec Outlook</a>
+            <a href="tel:+33180871315" class="btn inline-flex items-center justify-center border border-white/40 text-white hover:bg-white hover:text-nuit">Appeler le 01 80 87 13 15</a>
+          </div>
+          <p class="mt-3 text-sm text-white/60">Ou copiez le récapitulatif et envoyez-le à <a class="lien text-sable" href="mailto:${D.email}">${D.email}</a>.</p>
+          ${etat.date ? `<button type="button" id="agenda" class="lien mt-5 text-[.72rem] font-bold uppercase tracking-[.16em] text-sable">+ Ajouter à mon agenda</button>` : ''}
+        </div>
         <p class="mt-6 text-sm text-white/55">Le bouton ouvre votre messagerie avec la demande déjà rédigée, à l’adresse ${D.email}. Vous préférez la voix ? <a class="lien text-sable" href="tel:+33180871315">01 80 87 13 15</a></p>`;
       if ($('partager')) $('partager').addEventListener('click', async () => {
         const text = messageGroupe();
         try { if (navigator.share) await navigator.share({ title: 'Amuzetoi au NAPO', text }); else { await navigator.clipboard.writeText(text); $('partager').textContent = 'Message copié ✓'; } } catch { /* partage annulé */ }
+      });
+      $('envoyer').addEventListener('click', () => { setTimeout(() => { $('apres').classList.remove('hidden'); $('apres').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('apres').focus({ preventScroll: true }); }, 400); });
+      if ($('agenda')) $('agenda').addEventListener('click', () => {
+        // Fichier .ics : le créneau demandé, à confirmer par le NAPO
+        const h = parseInt(etat.moment, 10), debut = `${etat.date.replace(/-/g, '')}T${String(isNaN(h) ? 19 : h).padStart(2, '0')}0000`;
+        const duree = D.etapes.flatMap((x) => x.choix || []).find((c) => c.heures && Object.values(etat).includes(c.nom)), fin = `${etat.date.replace(/-/g, '')}T${String(Math.min(23, (isNaN(h) ? 19 : h) + (duree ? duree.heures : 2))).padStart(2, '0')}0000`;
+        const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//NAPO//Reservation//FR', 'BEGIN:VEVENT', `UID:${Date.now()}@lenapo.fr`, `DTSTART;TZID=Europe/Paris:${debut}`, `DTEND;TZID=Europe/Paris:${fin}`, `SUMMARY:${D.sujet} (à confirmer)`, 'LOCATION:NAPO\\, 4-6 rue Pierre Demours\\, 75017 Paris', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+        const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })), download: 'napo.ics' }); a.click();
       });
       $('copier').addEventListener('click', async () => { try { await navigator.clipboard.writeText(texte()); $('copier').textContent = 'Copié ✓'; } catch { $('copier').textContent = 'Copie impossible'; } });
     } else {
