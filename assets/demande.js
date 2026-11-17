@@ -69,8 +69,25 @@
     // Ce que la table ajoute, aux prix de la carte
     const table = D.etapes.flatMap((e) => e.choix || []).find((c) => c.ajout && Object.values(etat).includes(c.nom));
     if (table) { const q = table.ajout.pour ? Math.ceil(n / table.ajout.pour) : n; total += q * table.ajout.prix; lignes.push(`${q} × ${table.ajout.prix} € ${table.ajout.quoi}`); }
+    dernierTotal = total;
     return `${total} € (${lignes.join(' + ')})`;
   };
+  let dernierTotal = 0;
+  // Annulation gratuite : jusqu'à N heures avant l'heure d'arrivée
+  const limiteAnnulation = () => {
+    if (!D.conditions || !etat.date) return '';
+    const h = parseInt(etat.moment, 10), d = new Date(`${etat.date}T${String(isNaN(h) ? 14 : h).padStart(2, '0')}:00`);
+    d.setHours(d.getHours() - D.conditions.annulationHeures);
+    return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + ' à ' + d.getHours() + ' h';
+  };
+  // Addition partagée : la part de chacun, et le message à envoyer au groupe
+  const part = () => { estimation(); const n = personnes(); return n ? Math.ceil((dernierTotal / n) * 100) / 100 : 0; };
+  const euros = (x) => (Number.isInteger(x) ? String(x) : x.toFixed(2).replace('.', ',')) + ' €';
+  const lienPaiement = () => {
+    const l = (D.conditions && D.conditions.paiement) || {}, j = etat.date ? new Date(etat.date + 'T12:00').getDay() : 1, h = parseInt(etat.moment, 10);
+    return (j === 5 || j === 6) && !(h < 19) ? l.pointe : j === 6 ? l.weekend : l.semaine;
+  };
+  const messageGroupe = () => [`${etat.nom || 'On'} nous réserve une salle Amuzoire au NAPO (4-6 rue Pierre Demours, Paris 17).`, `${dateLisible(etat.date)}, ${etat.moment}.`, `Ta part : ${euros(part())} (${personnes()} personnes, total ${euros(dernierTotal)}).`, lienPaiement() ? `Pour payer ta part : ${lienPaiement()}` : 'Le lien de paiement arrive avec la confirmation du NAPO.', `Annulation gratuite jusqu’au ${limiteAnnulation()}.`].join('\n');
 
   // Ce que chaque étape apporte au récapitulatif
   const valeur = (e) => {
@@ -110,7 +127,7 @@
     const e = D.etapes[i];
     if ($('nb') && e) etat[e.id] = parseInt($('nb').value, 10) || 0;
   };
-  const texte = () => [D.intro, '', ...D.etapes.map((e) => `${e.resume} : ${valeur(e) || '-'}`), estimation() ? `Estimation : ${estimation()}` : '', etat.mot ? `\nMessage : ${etat.mot}` : ''].join('\n').trim();
+  const texte = () => [D.intro, '', ...D.etapes.map((e) => `${e.resume} : ${valeur(e) || '-'}`), estimation() ? `Estimation : ${estimation()}` : '', D.conditions && estimation() ? `Paiement partagé : ${euros(part())} par personne\nAnnulation gratuite jusqu’au ${limiteAnnulation()}` : '', etat.mot ? `\nMessage : ${etat.mot}` : ''].join('\n').trim();
 
   const billet = () => {
     $('billet').innerHTML = D.etapes.map((e, k) => { const v = valeur(e); const fait = k < i || (k === i && v && e.type !== 'contact');
@@ -133,7 +150,24 @@
           <a href="mailto:${D.email}?subject=${sujet}&body=${corps}" class="btn inline-flex items-center justify-center bg-bordeaux text-white hover:bg-terre">Envoyer ma demande</a>
           <button type="button" id="copier" class="btn inline-flex items-center justify-center border border-white/40 text-white hover:bg-white hover:text-nuit">Copier le récapitulatif</button>
         </div>
+        ${D.conditions ? `<div class="mt-8 grid gap-3 sm:grid-cols-3">
+          <div class="border border-white/15 bg-white/[.04] p-4"><p class="text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Paiement partagé</p><p class="mt-1 font-serif text-3xl font-semibold">${euros(part())}</p><p class="text-sm text-white/65">par personne, pour ${personnes()}</p></div>
+          <div class="border border-white/15 bg-white/[.04] p-4"><p class="text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Annulation gratuite</p><p class="mt-1 font-serif text-xl font-semibold leading-tight">jusqu’au ${limiteAnnulation()}</p><p class="text-sm text-white/65">${D.conditions.annulationHeures} h avant votre arrivée</p></div>
+          <div class="border border-white/15 bg-white/[.04] p-4"><p class="text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Prolongation</p><p class="mt-1 font-serif text-xl font-semibold leading-tight">possible sur place</p><p class="text-sm text-white/65">selon les disponibilités</p></div>
+        </div>
+        <div class="mt-4 border border-sable/50 bg-sable/10 p-5">
+          <p class="font-serif text-2xl font-semibold">Partagez l’addition avec votre groupe</p>
+          <p class="mt-1 text-sm text-white/70">Envoyez à chacun sa part de ${euros(part())}${lienPaiement() ? ' et le lien pour la payer' : ''}. ${lienPaiement() ? '' : 'Le lien de paiement vous est envoyé avec la confirmation.'}</p>
+          <div class="mt-4 flex flex-col gap-3 sm:flex-row">
+            <button type="button" id="partager" class="btn inline-flex items-center justify-center bg-sable text-nuit hover:bg-white">Envoyer à mes amis</button>
+            ${lienPaiement() ? `<a href="${lienPaiement()}" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center border border-white/40 text-white hover:bg-white hover:text-nuit">Payer ma part</a>` : ''}
+          </div>
+        </div>` : ''}
         <p class="mt-6 text-sm text-white/55">Le bouton ouvre votre messagerie avec la demande déjà rédigée, à l’adresse ${D.email}. Vous préférez la voix ? <a class="lien text-sable" href="tel:+33180871315">01 80 87 13 15</a></p>`;
+      if ($('partager')) $('partager').addEventListener('click', async () => {
+        const text = messageGroupe();
+        try { if (navigator.share) await navigator.share({ title: 'Amuzoire au NAPO', text }); else { await navigator.clipboard.writeText(text); $('partager').textContent = 'Message copié ✓'; } } catch { /* partage annulé */ }
+      });
       $('copier').addEventListener('click', async () => { try { await navigator.clipboard.writeText(texte()); $('copier').textContent = 'Copié ✓'; } catch { $('copier').textContent = 'Copie impossible'; } });
     } else {
       const e = D.etapes[i];
@@ -157,7 +191,7 @@
     if (b.dataset.fixe) etat[e.id] = Number(b.dataset.fixe);
     if (b.dataset.salle) { const l = etat[e.id], v = b.dataset.salle; etat[e.id] = l.includes(v) ? l.filter((x) => x !== v) : [...l, v]; etat.sallesChoisies = true; }
     if (b.dataset.moment) etat.moment = b.dataset.moment;
-    if (b.id !== 'copier') afficher(0);
+    if (b.id !== 'copier' && b.id !== 'partager') afficher(0);
   });
   $('etape').addEventListener('input', () => { lire(); billet(); });
   $('etape').addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && ev.target.tagName === 'INPUT') { ev.preventDefault(); avancer(); } });

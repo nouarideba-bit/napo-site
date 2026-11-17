@@ -79,7 +79,9 @@ tailwind.config = { theme: { extend: {
 <script>window.DEMANDE = {
   email: 'event@lenapo.fr', sujet: 'Réservation AMUZOIRE chez NAPO', intro: 'Bonjour, je souhaite réserver une salle AMUZOIRE au NAPO.',
   motExemple: 'Un anniversaire, une chanson fétiche, un dîner avant de chanter…',
-  finTitre: 'La scène est à vous.', finTexte: 'Envoyez-nous votre demande : nous vous confirmons la disponibilité des salles.',
+  finTitre: 'La scène est à vous.', finTexte: 'Envoyez-nous votre demande : nous vous confirmons la disponibilité des salles et vous envoyons le lien de paiement.',
+  // Paiement partagé : coller ici les liens de paiement (un par tarif) pour activer le bouton « Payer ma part »
+  conditions: { annulationHeures: 72, paiement: { semaine: '', weekend: '', pointe: '' } },
   tarif: { semaine: 12, weekend: 14, pointe: 16, note: 'Par personne et par heure : 12 € du lundi au vendredi · 14 € le samedi · 16 € le vendredi et le samedi à partir de 19 h. Salles AMUZOIRE ouvertes du lundi au samedi, de 14 h à 1 h.' },
   etapes: [
     { id: 'personnes', type: 'nombre', resume: 'Personnes', surtitre: 'Karaoké, blind-test et quiz dans la même session', question: 'Combien de voix dans la troupe ?', unite: 'personnes', min: 2, max: 30, defaut: 8, raccourcis: [4, 6, 10, 14, 20, 30] },
