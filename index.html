@@ -381,7 +381,10 @@ tailwind.config = { theme: { extend: {
       </div>
     </div>
     <div class="apparait min-h-[22rem] overflow-hidden border border-sable/60 bg-creme">
-      <iframe title="Plan : NAPO, 4-6 rue Pierre Demours, 75017 Paris" src="https://maps.google.com/maps?q=4%20rue%20Pierre%20Demours%2075017%20Paris&z=16&output=embed" class="h-full min-h-[22rem] w-full" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <a href="https://www.google.com/maps/search/?api=1&query=4%2F6%20rue%20Pierre%20Demours%2075017%20Paris" target="_blank" rel="noopener" class="group relative block h-full" aria-label="Ouvrir le plan dans Google Maps">
+        <img src="assets/img/plan.jpg" alt="Plan du quartier des Ternes : le NAPO au 4-6 rue Pierre Demours, entre les métros Ternes (ligne 2) et Argentine (ligne 1)" width="1400" height="900" class="h-full min-h-[22rem] w-full object-cover" loading="lazy">
+        <span class="absolute bottom-10 left-4 bg-white/95 px-4 py-2 text-[.7rem] font-bold uppercase tracking-[.16em] text-nuit shadow transition group-hover:bg-bordeaux group-hover:text-white">Agrandir le plan ↗</span>
+      </a>
     </div>
   </div>
 </section>
@@ -513,5 +516,6 @@ tailwind.config = { theme: { extend: {
   document.getElementById('annee').textContent = new Date().getFullYear();
 })();
 </script>
+<script src="assets/liens.js"></script>
 </body>
 </html>
