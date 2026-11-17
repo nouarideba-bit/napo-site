@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="fr" class="scroll-smooth">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Votre événement | NAPO</title>
+<meta name="description" content="Organisez votre événement au NAPO, restaurant corse à Paris 17 : déjeuner d’équipe, dîner de famille, anniversaire ou privatisation.">
+<link rel="canonical" href="https://lenapo.fr/evenement.html">
+<link rel="icon" href="assets/img/favicon.png">
+<meta property="og:title" content="NAPO | Restaurant corse à Paris 17">
+<meta property="og:description" content="La Corse prend ses quartiers à Paris. Cuisine corse contemporaine à deux pas des Ternes.">
+<meta property="og:image" content="https://lenapo.fr/assets/img/hero.webp">
+<meta property="og:type" content="restaurant">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  colors: { bordeaux: '#650305', terre: '#a83c2d', nuit: '#17203a', creme: '#f3eee5', ivoire: '#fffaf0', or: '#a27a39', sable: '#cab990', encre: '#171714' },
+  fontFamily: { serif: ['"Cormorant Garamond"', 'Georgia', 'serif'], sans: ['Manrope', 'system-ui', 'sans-serif'] },
+} } };
+</script>
+<style>
+  .lien { position: relative; }
+  .lien::after { content: ""; position: absolute; left: 0; right: 100%; bottom: -4px; height: 1px; background: currentColor; transition: right .25s ease; }
+  .lien:hover::after, .lien:focus-visible::after { right: 0; }
+  .btn { gap: .5rem; padding: .85rem 1.6rem; font-size: .8rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; transition: transform .2s ease, background-color .2s ease, color .2s ease, box-shadow .2s ease; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -12px rgba(23,32,58,.55); }
+  .btn:active { transform: translateY(0); }
+  .btn:focus-visible, a:focus-visible, button:focus-visible { outline: 2px solid #a27a39; outline-offset: 3px; }
+  .apparait { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+  .apparait.vu { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .apparait { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } .btn:hover { transform: none; } }
+</style>
+</head>
+<body class="min-h-screen bg-encre font-sans text-white antialiased lining-nums">
+<div class="pointer-events-none fixed inset-0">
+  <img src="assets/img/salle2.jpg" alt="" class="h-full w-full object-cover opacity-25">
+  <div class="absolute inset-0 bg-gradient-to-br from-encre via-encre/90 to-nuit/85"></div>
+</div>
+<div class="relative">
+  <header class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-8">
+    <a href="index.html" class="font-serif text-3xl font-semibold tracking-[.18em]">NAPO</a>
+    <a href="index.html#evenements" class="lien text-[.72rem] font-semibold uppercase tracking-[.16em] text-white/80">← Retour au site</a>
+  </header>
+  <div class="mx-auto h-px max-w-7xl bg-white/10"><div id="barre" class="h-px bg-sable transition-all duration-500" style="width:0"></div></div>
+
+  <main class="mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-8 sm:px-8 lg:grid-cols-[1fr_22rem] lg:gap-16 lg:pt-14">
+    <section aria-live="polite">
+      <p class="text-[.72rem] font-bold uppercase tracking-[.3em] text-sable">Votre événement · <span id="compteur"></span></p>
+      <h1 class="sr-only">Parler de votre événement au NAPO</h1>
+      <div id="etape" class="mt-6 min-h-[26rem]"></div>
+      <div class="mt-6 flex items-center justify-between border-t border-white/10 pt-6">
+        <button type="button" id="retour" class="lien text-sm font-semibold uppercase tracking-[.16em] text-white/70">← Précédent</button>
+        <button type="button" id="suite" class="btn inline-flex items-center justify-center bg-bordeaux text-white hover:bg-terre">Continuer →</button>
+      </div>
+    </section>
+
+    <aside class="lg:sticky lg:top-8 lg:self-start" aria-label="Récapitulatif de votre demande">
+      <div class="border border-or bg-ivoire p-1 text-nuit shadow-2xl"><div class="border border-or/50 px-6 py-7">
+        <p class="text-center font-serif text-3xl font-semibold tracking-[.18em]">NAPO</p>
+        <p class="mt-1 text-center font-serif text-lg italic text-or">Votre événement</p>
+        <dl id="billet" class="mt-5"></dl>
+        <p class="mt-5 text-center text-[.6rem] font-bold uppercase tracking-[.3em] text-nuit/60">Per l’onore è per a Corsica</p>
+      </div></div>
+    </aside>
+  </main>
+</div>
+<script>window.DEMANDE = {
+  email: 'event@lenapo.fr', sujet: 'Demande d’événement chez NAPO', intro: 'Bonjour, je souhaite organiser un événement au NAPO.',
+  motExemple: 'Une surprise à préparer, un régime alimentaire, une envie particulière…',
+  finTitre: 'Votre plan de campagne est prêt.', finTexte: 'Envoyez-le-nous : nous revenons vers vous pour construire ce moment ensemble.',
+  etapes: [
+    { id: 'type', type: 'cartes', resume: 'Événement', surtitre: 'Commençons par l’essentiel', question: 'Que célébrons-nous ?', choix: [
+      { nom: 'Déjeuner d’équipe', signe: '◆', detail: 'Entre collègues, autour de la table' },
+      { nom: 'Dîner de famille', signe: '❦', detail: 'Les grandes tablées' },
+      { nom: 'Anniversaire', signe: '✦', detail: 'Une date qui compte' },
+      { nom: 'Afterwork', signe: '◈', detail: 'Après le bureau' },
+      { nom: 'Privatisation', signe: '♛', detail: 'Le NAPO rien que pour vous' },
+      { nom: 'Autre événement', signe: '✧', detail: 'Racontez-nous à la dernière étape' } ] },
+    { id: 'convives', type: 'nombre', resume: 'Convives', surtitre: 'La troupe', question: 'Combien serez-vous ?', unite: 'convives', min: 2, max: 200, defaut: 10, raccourcis: [6, 10, 20, 30, 50] },
+    { id: 'quand', type: 'date', resume: 'Date', surtitre: 'Le jour J', question: 'Quand souhaitez-vous venir ?', libelleMoment: 'Moment', moments: ['Déjeuner', 'Dîner', 'Soirée'] },
+    { id: 'envies', type: 'multi', resume: 'Envies', surtitre: 'Les à-côtés', question: 'Qu’est-ce qui vous ferait plaisir ?', choix: [
+      { nom: 'Menu dégustation', detail: 'Campagne d’Italie, Empire ou Wagram' },
+      { nom: 'À partager', detail: 'U Spuntinu : charcuteries et fromages corses' },
+      { nom: 'Karaoké privé', detail: 'Prolonger la soirée au micro' },
+      { nom: 'Espace privatisé', detail: 'Un lieu rien qu’à vous' } ] },
+    { id: 'contact', type: 'contact', resume: 'Contact', surtitre: 'Dernière étape', question: 'Comment vous joindre ?' } ] };</script>
+<script src="assets/demande.js"></script>
+</body>
+</html>
