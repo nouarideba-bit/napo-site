@@ -16,8 +16,6 @@ Site du restaurant corse NAPO (4-6 rue Pierre Demours, 75017 Paris) et ses carte
 
 Le QR code des chevalets de carte pointe vers `https://lenapo.fr/menu/`. Celui du chevalet d'avis (`napo-chevalet-avis.pdf`, à poser dans les salles) pointe vers la fiche Google du restaurant.
 
-Sur `index.html`, les offres marquées « À valider » sont des propositions : retirer le badge une fois l'offre confirmée par le restaurant, ou supprimer la carte.
-
 Polices des cartes : Cinzel et Cormorant Garamond (licence SIL OFL 1.1).
 
 ## Activer le paiement partagé (Stripe Payment Links)
