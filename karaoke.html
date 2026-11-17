@@ -86,9 +86,10 @@ tailwind.config = { theme: { extend: {
     { id: 'quand', type: 'date', resume: 'Date', surtitre: 'Le grand soir', question: 'Quand voulez-vous venir ?', libelleMoment: 'Heure d’arrivée souhaitée', moments: ['18 h', '19 h', '20 h', '21 h', '22 h', 'Plus tard'] },
     { id: 'table', type: 'cartes', resume: 'À table', surtitre: 'Le NAPO est aussi un restaurant corse', question: 'Et pour la table ?', choix: [
       { nom: 'Juste la salle', signe: '♪', detail: 'On vient pour jouer' },
-      { nom: 'Planches à partager', signe: '◆', detail: 'U Spuntinu : à partir de 27 € la planche' },
-      { nom: 'Dîner à la carte', signe: '❦', detail: 'Avant ou après la session' },
-      { nom: 'Menu dégustation', signe: '♛', detail: 'À partir de 64 € par personne' } ] },
+      { nom: 'Un verre de vin corse', signe: '◈', detail: '6 € le verre, un par personne', ajout: { prix: 6, quoi: 'verre de vin corse' } },
+      { nom: 'Planches à partager', signe: '◆', detail: 'Les Grognards, 31 € : une planche pour quatre', ajout: { prix: 31, pour: 4, quoi: 'planche Les Grognards' } },
+      { nom: 'Menu dégustation', signe: '♛', detail: 'Campagne d’Italie, 6 temps : 64 € par personne', ajout: { prix: 64, quoi: 'menu Campagne d’Italie' } },
+      { nom: 'Dîner à la carte', signe: '❦', detail: 'Avant ou après la session, selon vos envies' } ] },
     { id: 'contact', type: 'contact', resume: 'Contact', surtitre: 'Dernière étape', question: 'À quel nom, la réservation ?' } ] };</script>
 <script src="assets/demande.js"></script>
 <script src="assets/animations.js"></script>

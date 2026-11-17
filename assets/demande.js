@@ -59,7 +59,12 @@
     // Pointe : arrivée à 19 h ou plus tard le vendredi ou le samedi
     const j = new Date(etat.date + 'T12:00').getDay(), we = j === 0 || j === 6, h = parseInt(etat.moment, 10), soir = etat.moment && !(h < 19);
     const pointe = D.tarif.pointe && soir && (j === 5 || j === 6), prix = pointe ? D.tarif.pointe : we ? D.tarif.weekend : D.tarif.semaine;
-    return `${personnes() * prix} € (${personnes()} × ${prix} €, tarif ${pointe ? 'vendredi et samedi soir' : we ? 'week-end' : 'semaine'})`;
+    const n = personnes(), lignes = [`${n} × ${prix} €, tarif ${pointe ? 'vendredi et samedi soir' : we ? 'week-end' : 'semaine'}`];
+    let total = n * prix;
+    // Ce que la table ajoute, aux prix de la carte
+    const table = D.etapes.flatMap((e) => e.choix || []).find((c) => c.ajout && Object.values(etat).includes(c.nom));
+    if (table) { const q = table.ajout.pour ? Math.ceil(n / table.ajout.pour) : n; total += q * table.ajout.prix; lignes.push(`${q} × ${table.ajout.prix} € ${table.ajout.quoi}`); }
+    return `${total} € (${lignes.join(' + ')})`;
   };
 
   // Ce que chaque étape apporte au récapitulatif
