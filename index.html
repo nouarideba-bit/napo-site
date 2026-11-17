@@ -43,7 +43,7 @@ tailwind.config = { theme: { extend: {
   @media (prefers-reduced-motion: reduce) { .amuz-l, .amuz-o svg { animation: none; } }
 </style>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Restaurant","name":"NAPO","url":"https://lenapo.fr/","email":"contact@lenapo.fr","telephone":"+33180871315","servesCuisine":"Cuisine corse contemporaine","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"14:00","closes":"01:00"}],"image":"https://lenapo.fr/assets/img/hero.webp","menu":"https://lenapo.fr/#carte","address":{"@type":"PostalAddress","streetAddress":"4-6 rue Pierre Demours","postalCode":"75017","addressLocality":"Paris","addressCountry":"FR"},"potentialAction":{"@type":"ReserveAction","target":"https://bookings.zenchef.com/results?rid=388299&pid=1001&lang=fr"}}
+{"@context":"https://schema.org","@type":"Restaurant","name":"NAPO","url":"https://lenapo.fr/","email":"contact@lenapo.fr","telephone":"+33180871315","servesCuisine":"Cuisine corse contemporaine","openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"02:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"17:00","closes":"02:00"}],"image":"https://lenapo.fr/assets/img/hero.webp","menu":"https://lenapo.fr/#carte","address":{"@type":"PostalAddress","streetAddress":"4-6 rue Pierre Demours","postalCode":"75017","addressLocality":"Paris","addressCountry":"FR"},"potentialAction":{"@type":"ReserveAction","target":"https://bookings.zenchef.com/results?rid=388299&pid=1001&lang=fr"}}
 </script>
 </head>
 <body class="bg-white font-sans text-nuit antialiased lining-nums">
@@ -371,7 +371,7 @@ tailwind.config = { theme: { extend: {
         <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">Accès</dt><dd class="mt-1 text-lg">Métro Argentine (ligne 1) ou Ternes (ligne 2)<br><span class="text-sm text-nuit/70">Bus 43, arrêt Saint-Ferdinand</span></dd></div>
         <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">Téléphone</dt><dd class="mt-1 text-lg"><a class="lien" href="tel:+33180871315">01 80 87 13 15</a></dd></div>
         <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">E-mail</dt><dd class="mt-1 text-lg"><a class="lien" href="mailto:contact@lenapo.fr">contact@lenapo.fr</a></dd></div>
-        <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">Horaires</dt><dd class="mt-1 text-lg">Du lundi au samedi, de 14 h à 1 h du matin<br><span class="text-sm text-nuit/70">Fermé le dimanche · restaurant et salles Amuzoire</span></dd></div>
+        <div><dt class="text-xs font-bold uppercase tracking-[.2em] text-or">Horaires</dt><dd class="mt-1 text-lg">Du lundi au vendredi, de 8 h à 2 h<br>Le samedi, de 17 h à 2 h<br><span class="text-sm text-nuit/70">Fermé le dimanche · salles Amuzoire du lundi au samedi, de 14 h à 1 h</span></dd></div>
       </dl>
       <div class="mt-9 flex flex-col gap-3 sm:flex-row">
         <a href="https://bookings.zenchef.com/results?rid=388299&pid=1001&lang=fr" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center bg-bordeaux text-white hover:bg-terre">Réserver une table</a>
@@ -390,7 +390,7 @@ tailwind.config = { theme: { extend: {
     <div>
       <p class="font-serif text-4xl font-semibold tracking-[.18em] text-white">NAPO</p>
       <p class="mt-2 text-sm">Cuisine corse contemporaine · 4-6 rue Pierre Demours, 75017 Paris</p>
-      <p class="mt-1 text-sm">Du lundi au samedi, de 14 h à 1 h · fermé le dimanche</p>
+      <p class="mt-1 text-sm">Du lundi au vendredi de 8 h à 2 h · le samedi de 17 h à 2 h · fermé le dimanche</p>
       <p class="mt-1 font-serif text-lg italic text-sable">Per l’onore è per a Corsica</p>
     </div>
     <nav class="flex flex-wrap gap-x-6 gap-y-2 text-sm" aria-label="Pied de page">
