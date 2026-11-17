@@ -4,7 +4,7 @@
   const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
   const $ = (id) => document.getElementById(id);
   const etat = {};
-  D.etapes.forEach((e) => { if (e.type === 'nombre') etat[e.id] = e.defaut; if (e.type === 'multi') etat[e.id] = []; if (e.type === 'salles') etat[e.id] = 1; });
+  D.etapes.forEach((e) => { if (e.type === 'nombre') etat[e.id] = e.defaut; if (e.type === 'multi') etat[e.id] = []; if (e.type === 'salles') etat[e.id] = []; });
   let i = 0;
   const aujourdhui = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
   const dateLisible = (d) => new Date(d + 'T12:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -21,16 +21,18 @@
         <button type="button" data-pas="1" aria-label="Plus" class="grid h-14 w-14 place-items-center border border-white/25 text-2xl transition hover:border-sable hover:text-sable">+</button>
       </div><p class="mt-3 text-center text-sm uppercase tracking-[.25em] text-sable sm:text-left">${esc(e.unite)}</p>
       <div class="mt-6 flex flex-wrap justify-center gap-2 sm:justify-start">${e.raccourcis.map((n) => `<button type="button" data-fixe="${n}" class="border border-white/15 px-4 py-2 text-sm transition hover:border-sable hover:text-sable">${n}</button>`).join('')}</div>`,
-    salles: (e) => `<div class="grid grid-cols-2 gap-3 sm:grid-cols-4" role="group" aria-label="Nombre de salles">${[1, 2, 3, 4].map((n) => { const a = n <= etat[e.id]; return `<button type="button" data-salles="${n}" aria-pressed="${etat[e.id] === n}" aria-label="${n} salle${n > 1 ? 's' : ''}" class="relative flex aspect-[3/4] flex-col items-center justify-center gap-3 border transition duration-300 hover:-translate-y-1 ${a ? 'border-sable bg-gradient-to-b from-bordeaux to-bordeaux/40 text-white shadow-[0_0_40px_-8px_#a83c2d]' : 'border-white/15 bg-white/[.03] text-white/40 hover:border-sable/60'}">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5v4M8.5 21.5h7"/></svg>
-          <span class="font-serif text-2xl font-semibold">Salle ${n}</span>
-          <span class="text-[.65rem] font-bold uppercase tracking-[.2em]">${a ? 'Pour vous' : 'Libre'}</span></button>`; }).join('')}</div>
-      <p class="mt-5 text-center font-serif text-2xl text-sable sm:text-left">${etat[e.id]} salle${etat[e.id] > 1 ? 's' : ''} sur 4${etat[e.id] === 4 ? ' : tout le karaoké pour vous.' : ''}</p>`,
+    salles: (e) => { const n = personnes(), cap = capacite(e), conseil = suggestion(e, n);
+      return `<div class="grid gap-3 sm:grid-cols-${e.salles.length}" role="group" aria-label="Salles">${e.salles.map((sa) => { const a = etat[e.id].includes(sa.nom); return `<button type="button" data-salle="${esc(sa.nom)}" aria-pressed="${a}" class="relative flex min-h-[11rem] flex-col items-center justify-center gap-2 border px-3 py-6 text-center transition duration-300 hover:-translate-y-1 ${a ? 'border-sable bg-gradient-to-b from-bordeaux to-bordeaux/40 text-white shadow-[0_0_40px_-8px_#a83c2d]' : 'border-white/15 bg-white/[.03] text-white/55 hover:border-sable/60'}">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5v4M8.5 21.5h7"/></svg>
+          <span class="font-serif text-2xl font-semibold leading-tight">${esc(sa.nom)}</span>
+          <span class="text-sm">${sa.min} à ${sa.max} personnes</span>
+          <span class="text-[.65rem] font-bold uppercase tracking-[.2em] text-sable">${a ? 'Pour vous' : conseil.includes(sa.nom) ? 'Conseillée' : '&nbsp;'}</span></button>`; }).join('')}</div>
+      <p class="mt-5 font-serif text-xl text-sable">${etat[e.id].length ? `${etat[e.id].length} salle${etat[e.id].length > 1 ? 's' : ''} · jusqu’à ${cap} personnes` : 'Aucune salle choisie'} <span class="text-white/55">pour votre groupe de ${n}</span></p>`; },
     date: (e) => `<label class="block text-xs font-bold uppercase tracking-[.2em] text-sable" for="date">Date souhaitée</label>
       <input id="date" type="date" min="${aujourdhui}" value="${etat.date || ''}" class="${champ} [color-scheme:dark]">
       <p class="mt-8 text-xs font-bold uppercase tracking-[.2em] text-sable">${esc(e.libelleMoment)}</p>
       <div class="mt-3 flex flex-wrap gap-2">${e.moments.map((m) => `<button type="button" data-moment="${esc(m)}" aria-pressed="${etat.moment === m}" class="border px-5 py-3 text-sm font-semibold transition ${etat.moment === m ? 'border-sable bg-sable text-nuit' : 'border-white/20 hover:border-sable hover:text-sable'}">${esc(m)}</button>`).join('')}</div>
-      <label class="mt-8 flex cursor-pointer items-center gap-3 text-white/75"><input id="flexible" type="checkbox" ${etat.flexible ? 'checked' : ''} class="h-5 w-5 border-white/40 bg-transparent text-bordeaux focus:ring-sable"> Je suis flexible sur la date</label>`,
+      <label class="mt-8 flex cursor-pointer items-center gap-3 text-white/75"><input id="flexible" type="checkbox" ${etat.flexible ? 'checked' : ''} class="h-5 w-5 border-white/40 bg-transparent text-bordeaux focus:ring-sable"> Je suis flexible sur la date</label>${D.tarif ? `<p class="mt-6 text-sm text-white/60">${D.tarif.semaine} € par personne du lundi au vendredi · ${D.tarif.weekend} € par personne le samedi et le dimanche.</p>` : ''}`,
     contact: () => `<div class="grid gap-6 sm:grid-cols-2">
         <div><label class="text-xs font-bold uppercase tracking-[.2em] text-sable" for="nom">Nom</label><input id="nom" autocomplete="name" value="${esc(etat.nom || '')}" class="${champ}" placeholder="Votre nom"></div>
         <div><label class="text-xs font-bold uppercase tracking-[.2em] text-sable" for="tel">Téléphone</label><input id="tel" type="tel" autocomplete="tel" value="${esc(etat.tel || '')}" class="${champ}" placeholder="06 12 34 56 78"></div>
@@ -39,12 +41,31 @@
       </div>`,
   };
 
+  // Salles : capacité choisie, et la plus petite combinaison qui accueille le groupe
+  const personnes = () => { const e = D.etapes.find((x) => x.type === 'nombre'); return e ? etat[e.id] : 0; };
+  const capacite = (e) => e.salles.filter((sa) => etat[e.id].includes(sa.nom)).reduce((t, sa) => t + sa.max, 0);
+  const suggestion = (e, n) => {
+    let mieux = null;
+    for (let m = 1; m < 1 << e.salles.length; m++) {
+      const lot = e.salles.filter((_, k) => m & (1 << k)), min = lot.reduce((t, sa) => t + sa.min, 0), max = lot.reduce((t, sa) => t + sa.max, 0);
+      if (n < min || n > max) continue;
+      if (!mieux || lot.length < mieux.lot.length || (lot.length === mieux.lot.length && max < mieux.max)) mieux = { lot, max };
+    }
+    return (mieux ? mieux.lot : e.salles).map((sa) => sa.nom);
+  };
+  // Estimation : tarif par personne, selon que la date tombe en semaine ou le week-end
+  const estimation = () => {
+    if (!D.tarif || !etat.date || !personnes()) return '';
+    const j = new Date(etat.date + 'T12:00').getDay(), we = j === 0 || j === 6, prix = we ? D.tarif.weekend : D.tarif.semaine;
+    return `${personnes() * prix} € (${personnes()} × ${prix} €, tarif ${we ? 'week-end' : 'semaine'})`;
+  };
+
   // Ce que chaque étape apporte au récapitulatif
   const valeur = (e) => {
     if (e.type === 'cartes') return etat[e.id] || '';
     if (e.type === 'multi') return etat[e.id].join(', ');
     if (e.type === 'nombre') return `${etat[e.id]} ${e.unite}`;
-    if (e.type === 'salles') return `${etat[e.id]} sur 4`;
+    if (e.type === 'salles') return etat[e.id].join(', ');
     if (e.type === 'date') return [etat.date ? dateLisible(etat.date) : '', etat.moment, etat.flexible ? 'date flexible' : ''].filter(Boolean).join(' · ');
     if (e.type === 'contact') return [etat.nom, etat.tel, etat.mail].filter(Boolean).join(' · ');
     return '';
@@ -52,6 +73,12 @@
   const erreur = (e) => {
     if (e.type === 'cartes' && !etat[e.id]) return 'Choisissez une option pour continuer.';
     if (e.type === 'nombre' && !(etat[e.id] >= e.min && etat[e.id] <= e.max)) return `Indiquez un nombre entre ${e.min} et ${e.max}.`;
+    if (e.type === 'salles') {
+      const n = personnes(), min = e.salles.filter((sa) => etat[e.id].includes(sa.nom)).reduce((t, sa) => t + sa.min, 0);
+      if (!etat[e.id].length) return 'Choisissez au moins une salle.';
+      if (n > capacite(e)) return `Ces salles accueillent ${capacite(e)} personnes au maximum : ajoutez une salle.`;
+      if (n < min) return `Il faut au moins ${min} personnes pour ces salles : retirez-en une.`;
+    }
     if (e.type === 'date') {
       if (!etat.date) return 'Choisissez une date.';
       if (etat.date < aujourdhui) return 'Cette date est déjà passée.';
@@ -70,11 +97,11 @@
     const e = D.etapes[i];
     if ($('nb') && e) etat[e.id] = parseInt($('nb').value, 10) || 0;
   };
-  const texte = () => [D.intro, '', ...D.etapes.map((e) => `${e.resume} : ${valeur(e) || '-'}`), etat.mot ? `\nMessage : ${etat.mot}` : ''].join('\n').trim();
+  const texte = () => [D.intro, '', ...D.etapes.map((e) => `${e.resume} : ${valeur(e) || '-'}`), estimation() ? `Estimation : ${estimation()}` : '', etat.mot ? `\nMessage : ${etat.mot}` : ''].join('\n').trim();
 
   const billet = () => {
     $('billet').innerHTML = D.etapes.map((e, k) => { const v = valeur(e); const fait = k < i || (k === i && v && e.type !== 'contact');
-      return `<div class="flex items-baseline gap-3 border-b border-or/25 py-2.5 ${fait ? '' : 'opacity-40'}"><dt class="w-24 shrink-0 text-[.62rem] font-bold uppercase tracking-[.18em] text-or">${esc(e.resume)}</dt><dd class="font-serif text-lg font-semibold leading-tight text-nuit">${fait && v ? esc(v) : '…'}</dd></div>`; }).join('');
+      return `<div class="flex items-baseline gap-3 border-b border-or/25 py-2.5 ${fait ? '' : 'opacity-40'}"><dt class="w-24 shrink-0 text-[.62rem] font-bold uppercase tracking-[.18em] text-or">${esc(e.resume)}</dt><dd class="font-serif text-lg font-semibold leading-tight text-nuit">${fait && v ? esc(v) : '…'}</dd></div>`; }).join('') + (estimation() ? `<div class="mt-3 bg-bordeaux px-4 py-3 text-center text-white"><dt class="text-[.62rem] font-bold uppercase tracking-[.18em] text-sable">Estimation</dt><dd class="font-serif text-2xl font-semibold">${esc(estimation().split(' (')[0])}</dd><dd class="text-xs text-white/75">${esc(estimation().split(' (')[1].replace(')', ''))}</dd></div>` : '');
   };
 
   const afficher = (sens = 1) => {
@@ -97,6 +124,7 @@
       $('copier').addEventListener('click', async () => { try { await navigator.clipboard.writeText(texte()); $('copier').textContent = 'Copié ✓'; } catch { $('copier').textContent = 'Copie impossible'; } });
     } else {
       const e = D.etapes[i];
+      if (e.type === 'salles' && !etat.sallesChoisies) etat[e.id] = suggestion(e, personnes());
       z.innerHTML = `<p class="font-serif text-xl italic text-sable">${esc(e.surtitre)}</p>
         <h2 class="mt-2 font-serif text-4xl font-semibold leading-none sm:text-6xl" tabindex="-1" id="titre">${esc(e.question)}</h2>
         <div class="mt-9">${rendus[e.type](e)}</div><p id="erreur" role="alert" class="mt-5 min-h-[1.5rem] text-sm font-semibold text-[#ffb4a8]"></p>`;
@@ -114,7 +142,7 @@
     if (b.dataset.val !== undefined && e.type === 'multi') { const l = etat[e.id], v = b.dataset.val; etat[e.id] = l.includes(v) ? l.filter((x) => x !== v) : [...l, v]; }
     if (b.dataset.pas) etat[e.id] = Math.max(e.min, Math.min(e.max, (etat[e.id] || 0) + Number(b.dataset.pas)));
     if (b.dataset.fixe) etat[e.id] = Number(b.dataset.fixe);
-    if (b.dataset.salles) etat[e.id] = Number(b.dataset.salles);
+    if (b.dataset.salle) { const l = etat[e.id], v = b.dataset.salle; etat[e.id] = l.includes(v) ? l.filter((x) => x !== v) : [...l, v]; etat.sallesChoisies = true; }
     if (b.dataset.moment) etat.moment = b.dataset.moment;
     if (b.id !== 'copier') afficher(0);
   });

@@ -100,16 +100,16 @@
     c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
   }
 
-  // 4. Karaoké, illustration : les quatre salles s'allument l'une après l'autre
-  const notes = (() => { const r = hasard(23); return Array.from({ length: 20 }, (_, k) => ({ salle: k % 4, dx: (r() - 0.5) * 0.8, phase: r(), croche: r() < 0.5 })); })();
+  // 4. Karaoké, illustration : les trois salles s'allument l'une après l'autre
+  const notes = (() => { const r = hasard(23); return Array.from({ length: 20 }, (_, k) => ({ salle: k % 3, dx: (r() - 0.5) * 0.8, phase: r(), croche: r() < 0.5 })); })();
   function salles(c, w, h, t, fond) {
     if (fond) { c.fillStyle = fond; c.fillRect(0, 0, w, h); } else c.clearRect(0, 0, w, h);
     const u = Math.min(w / 16, h / 7), cx = w / 2, sol = h * 0.86, p = t / T;
     c.lineCap = 'round'; c.lineJoin = 'round';
     c.strokeStyle = OR; c.lineWidth = u * 0.04; c.beginPath(); c.moveTo(cx - u * 7.4, sol); c.lineTo(cx + u * 7.4, sol); c.stroke();
-    const allume = (k) => Math.min(1, pic(boucle(p - k / 4 + 0.5) - 0.5, 0.24) * 1.7);
-    for (let k = 0; k < 4; k++) {
-      const x = cx + (k - 1.5) * u * 3.5, lp = u * 1.9, hp = u * 3.9, a = allume(k);
+    const allume = (k) => Math.min(1, pic(boucle(p - k / 3 + 0.5) - 0.5, 0.3) * 1.7);
+    for (let k = 0; k < 3; k++) {
+      const x = cx + (k - 1) * u * 4.2, lp = u * 1.9, hp = u * 3.9, a = allume(k);
       const porte = () => { c.beginPath(); c.moveTo(x - lp / 2, sol); c.lineTo(x - lp / 2, sol - hp + lp / 2); c.arc(x, sol - hp + lp / 2, lp / 2, Math.PI, 0); c.lineTo(x + lp / 2, sol); c.closePath(); };
       if (a > 0.01) {
         const halo = c.createRadialGradient(x, sol - hp * 0.5, 0, x, sol - hp * 0.5, u * 3.2);
@@ -128,7 +128,7 @@
     // les notes qui s'échappent des salles allumées
     for (const n of notes) {
       const a = allume(n.salle), vie = boucle(p * 4 + n.phase); if (a < 0.05) continue;
-      const x = cx + (n.salle - 1.5) * u * 3.5 + n.dx * u + Math.sin(TAU * (vie + n.phase)) * u * 0.25, y = sol - u * 4.1 - vie * u * 1.9, r = u * 0.13;
+      const x = cx + (n.salle - 1) * u * 4.2 + n.dx * u + Math.sin(TAU * (vie + n.phase)) * u * 0.25, y = sol - u * 4.1 - vie * u * 1.9, r = u * 0.13;
       c.globalAlpha = a * Math.sin(Math.PI * vie); c.fillStyle = OR_VIF; c.strokeStyle = OR_VIF; c.lineWidth = u * 0.04;
       c.beginPath(); c.ellipse(x, y, r, r * 0.75, -0.4, 0, TAU); c.fill();
       c.beginPath(); c.moveTo(x + r * 0.9, y - r * 0.2); c.lineTo(x + r * 0.9, y - u * 0.5); if (n.croche) c.quadraticCurveTo(x + u * 0.32, y - u * 0.42, x + u * 0.3, y - u * 0.22); c.stroke();
