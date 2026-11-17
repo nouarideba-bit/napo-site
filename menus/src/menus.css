@@ -1,0 +1,53 @@
+@font-face{font-family:Cinzel;font-weight:400;src:url(fonts/cinzel-latin-400-normal.woff2)}
+@font-face{font-family:Cinzel;font-weight:500;src:url(fonts/cinzel-latin-500-normal.woff2)}
+@font-face{font-family:Cinzel;font-weight:600;src:url(fonts/cinzel-latin-600-normal.woff2)}
+@font-face{font-family:Cormorant;font-weight:400;src:url(fonts/cormorant-garamond-latin-400-normal.woff2)}
+@font-face{font-family:Cormorant;font-weight:500;src:url(fonts/cormorant-garamond-latin-500-normal.woff2)}
+@font-face{font-family:Cormorant;font-weight:600;src:url(fonts/cormorant-garamond-latin-600-normal.woff2)}
+@font-face{font-family:Cormorant;font-weight:700;src:url(fonts/cormorant-garamond-latin-700-normal.woff2)}
+@font-face{font-family:Cormorant;font-weight:400;font-style:italic;src:url(fonts/cormorant-garamond-latin-400-italic.woff2)}
+@font-face{font-family:Cormorant;font-weight:500;font-style:italic;src:url(fonts/cormorant-garamond-latin-500-italic.woff2)}
+@page{size:120mm 150mm;margin:0}
+:root{--navy:#17203a;--or:#a27a39;--or-clair:#cab990}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Cormorant,serif;color:var(--navy);font-variant-numeric:lining-nums}
+.page{width:120mm;height:150mm;position:relative;background:url(fond.jpg) center/cover;page-break-after:always;overflow:hidden}
+.page:last-child{page-break-after:auto}
+.contenu{position:absolute;left:11mm;right:11mm;top:34.5mm;bottom:19.5mm;display:flex;flex-direction:column}
+h1{font-family:Cinzel,serif;font-weight:500;color:var(--or);text-align:center;font-size:15pt;letter-spacing:.06em;text-transform:uppercase;line-height:1.1}
+.sous-titre{font-family:Cinzel,serif;text-align:center;font-size:5.4pt;letter-spacing:.22em;text-transform:uppercase;margin-top:1.2mm}
+.devise{text-align:center;font-style:italic;font-size:7.5pt;margin-top:.6mm;color:var(--or)}
+.colonnes{display:grid;grid-template-columns:1fr 1fr;column-gap:7mm;flex:1;margin-top:2.6mm;position:relative}
+.colonnes::before{content:"";position:absolute;left:50%;top:1mm;bottom:1mm;border-left:.2mm solid var(--or-clair)}
+.col{display:flex;flex-direction:column;justify-content:space-evenly}
+h2{font-family:Cinzel,serif;font-weight:500;color:var(--or);font-size:6.6pt;letter-spacing:.16em;white-space:nowrap;text-transform:uppercase;text-align:center;display:flex;align-items:center;gap:2mm;margin:.6mm 0}
+h2::before,h2::after{content:"";flex:1;border-top:.2mm solid var(--or-clair)}
+.plat .ligne{display:flex;align-items:baseline;gap:1.2mm}
+.plat .nom{font-weight:700;font-size:8.6pt;line-height:1.1}
+.plat .pts{flex:1;border-bottom:.25mm dotted var(--or);transform:translateY(-.7mm);min-width:3mm}
+.plat .prix{font-weight:600;font-size:8.6pt;white-space:nowrap}
+.plat .desc{font-size:7pt;line-height:1.12;padding-right:6mm}
+.plat .note{font-style:italic;font-size:6.6pt;line-height:1.12;color:var(--or)}
+.pied{text-align:center;font-style:italic;font-size:6.2pt;margin-top:1mm}
+.signature{text-align:center;font-style:italic;font-size:9.5pt;color:var(--or);margin-top:1.5mm}
+/* une colonne */
+.liste{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;margin-top:2mm;padding:0 9mm}
+/* menus dégustation */
+.menus{display:grid;grid-template-columns:repeat(3,1fr);column-gap:4mm;flex:1;margin-top:3.5mm}
+.menu{display:flex;flex-direction:column;border-left:.2mm solid var(--or-clair);padding-left:3mm}
+.menu:first-child{border-left:0;padding-left:0}
+.menu h2{display:flex;align-items:flex-end;justify-content:center;white-space:normal;min-height:7mm;font-size:7.6pt;letter-spacing:.12em;line-height:1.15;margin:0}
+.menu h2::before,.menu h2::after{display:none}
+.menu .temps{font-family:Cinzel,serif;text-align:center;font-size:5.6pt;letter-spacing:.2em;text-transform:uppercase;margin-top:.8mm}
+.menu .tarif{text-align:center;font-weight:700;font-size:11pt;margin:.6mm 0 1.6mm;padding-bottom:1.4mm;border-bottom:.2mm solid var(--or-clair)}
+.menu ol{list-style:none;flex:1;display:flex;flex-direction:column;justify-content:flex-start;gap:1.5mm}
+.menu li{display:flex;gap:1.2mm;font-size:7.4pt;line-height:1.1;font-weight:500}
+.menu li b{font-family:Cinzel,serif;font-weight:500;color:var(--or);font-size:6pt;min-width:2.8mm;padding-top:.2mm}
+/* chevalet QR code */
+.qr{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+.qr img{height:100%;max-height:44mm;aspect-ratio:1;padding:2.5mm;border:.3mm solid var(--or);outline:.2mm solid var(--or-clair);outline-offset:1mm;background:#fffdf8}
+.qr-seul img{max-height:66mm;padding:4mm}
+.langues{list-style:none;display:grid;row-gap:.7mm;margin:2.5mm auto 0}
+.langues li{display:flex;align-items:baseline;gap:2.5mm;font-size:8.6pt;font-weight:500;line-height:1.15}
+.langues b{font-family:Cinzel,serif;font-weight:500;color:var(--or);font-size:6pt;letter-spacing:.15em;min-width:5mm}
+.url{font-family:Cinzel,serif;text-align:center;font-size:5.6pt;letter-spacing:.22em;text-transform:uppercase;margin-top:2mm}
