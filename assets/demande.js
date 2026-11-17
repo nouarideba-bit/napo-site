@@ -84,8 +84,8 @@
   const part = () => { estimation(); const n = personnes(); return n ? Math.ceil((dernierTotal / n) * 100) / 100 : 0; };
   const euros = (x) => (Number.isInteger(x) ? String(x) : x.toFixed(2).replace('.', ',')) + ' €';
   const lienPaiement = () => {
-    const l = (D.conditions && D.conditions.paiement) || {}, j = etat.date ? new Date(etat.date + 'T12:00').getDay() : 1, h = parseInt(etat.moment, 10);
-    return (j === 5 || j === 6) && !(h < 19) ? l.pointe : j === 6 ? l.weekend : l.semaine;
+    const ok = (u) => (/^https:\/\/buy\.stripe\.com\//.test(u || '') ? u : ''), l = (D.conditions && D.conditions.paiement) || {}, j = etat.date ? new Date(etat.date + 'T12:00').getDay() : 1, h = parseInt(etat.moment, 10);
+    return ok((j === 5 || j === 6) && !(h < 19) ? l.pointe : j === 6 ? l.weekend : l.semaine);
   };
   const messageGroupe = () => [`${etat.nom || 'On'} nous réserve une salle Amuzoire au NAPO (4-6 rue Pierre Demours, Paris 17).`, `${dateLisible(etat.date)}, ${etat.moment}.`, `Ta part : ${euros(part())} (${personnes()} personnes, total ${euros(dernierTotal)}).`, lienPaiement() ? `Pour payer ta part : ${lienPaiement()}` : 'Le lien de paiement arrive avec la confirmation du NAPO.', `Annulation gratuite jusqu’au ${limiteAnnulation()}.`].join('\n');
 
@@ -160,7 +160,7 @@
           <p class="mt-1 text-sm text-white/70">Envoyez à chacun sa part de ${euros(part())}${lienPaiement() ? ' et le lien pour la payer' : ''}. ${lienPaiement() ? '' : 'Le lien de paiement vous est envoyé avec la confirmation.'}</p>
           <div class="mt-4 flex flex-col gap-3 sm:flex-row">
             <button type="button" id="partager" class="btn inline-flex items-center justify-center bg-sable text-nuit hover:bg-white">Envoyer à mes amis</button>
-            ${lienPaiement() ? `<a href="${lienPaiement()}" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center border border-white/40 text-white hover:bg-white hover:text-nuit">Payer ma part</a>` : ''}
+            ${lienPaiement() ? `<a href="${lienPaiement()}" target="_blank" rel="noopener" class="btn inline-flex items-center justify-center border border-white/40 text-white hover:bg-white hover:text-nuit">Payer ma part</a>` : `<span class="btn inline-flex cursor-not-allowed items-center justify-center border border-white/20 text-white/45" aria-disabled="true">Payer ma part · bientôt en ligne</span>`}
           </div>
         </div>` : ''}
         <p class="mt-6 text-sm text-white/55">Le bouton ouvre votre messagerie avec la demande déjà rédigée, à l’adresse ${D.email}. Vous préférez la voix ? <a class="lien text-sable" href="tel:+33180871315">01 80 87 13 15</a></p>`;
